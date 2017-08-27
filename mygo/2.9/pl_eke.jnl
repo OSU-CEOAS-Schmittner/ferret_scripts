@@ -1,0 +1,19 @@
+!***********************************************************************
+! Description: plots eddy kinetic energy from UVic, where 
+! eke = (log_10((K_gm/min(L_rhine, L_r) * 100)^2). in cm^2/s^2
+!
+! arguments  :  $1 : file name
+!               $2 : depth choose z level. This depends on how matrix is 
+!                    sliced in model. e.g. k=4
+!               $3 : time (averaging) period e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+
+query/ignore $1%<Use: GO pl_eke filename%
+define symbol tav = $2%l=1%
+define symbol dep = $3%k=1%
+use $1
+
+let eke = log((o_kgm/min(o_lrhi,o_lr) * 100.0)^2)
+shade eke[($dep),($tav)]
+shade/lev=(0,4,.05)(inf)
