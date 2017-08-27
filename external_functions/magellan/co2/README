@@ -1,5 +1,0 @@
-Aug 29, 2011: co2sat recompiled with gfortran
-	see ../ef_utility/plattform_specific_flags.mk
-	LOG() in o2sat.F changed to ALOG()
-
-	 
