@@ -1,0 +1,47 @@
+! Description: plots surface variable concentration for Model vs. 
+! observations
+
+go portraitNxN 2 3 90 30
+!set win/asp=0.9
+set reg/x=120:480
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal default
+
+set reg/x=30:390
+
+set view 1
+shade/set/nolab/($lev) p
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) p
+sha/o/nolab/lev=(0)/pal=grey g_kmt[d=($dataset)]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 ($title)
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 "OBS"
+
+set view 3
+
+shade/set/nolab/($lev) q
+ppl shakey 1,1,0.16
+ppl AXLSZE 0. 0.16
+ppl shade
+fill/nolab/o/($lev) q
+sha/o/nolab/lev=(0)/pal=grey g_kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 ($model)
+
+set view 5
+pl/set/nolab/($opt)/thick=3 pmasked[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl yfor ($yfor)
+ppl plot
+pl/nolab/o/li/col=red/thick=3 qmasked[x=@ave]
+
+!pl/o/nolab/vs/thick=3/li/col=black {-20,0},{13,13}; label 5 13  -1,0,0.2 "OBS"
+!pl/o/nolab/vs/li/col=red/thick=3 {-20,0},{10,10}; label 5 10  -1,0,0.2 "MODEL"
+
+go legline ($labx1), ($labxd), ($laby1), 7, .2, "Observations"
+go legline ($labx1), ($labxd), ($laby2), 8, .2, ($model)
+
+can reg/x

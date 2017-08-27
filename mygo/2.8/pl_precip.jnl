@@ -1,0 +1,42 @@
+!***********************************************************************
+! Description: plots precipitation in model compared to observations
+!
+! arguments  : $1 : time specification e.g. "l=4"
+! use        : go pl_precip d=1 l=4 QUOTES NEEDED
+!
+!***********************************************************************
+
+go portraitNxN 2 2 95 10
+define symbol data = $1%1%
+define symbol tav = $2%l=1%
+define symbol lev = (0)(.2)(.5)(1)(2)(5)(10)
+!use 1
+let day = 3600*24
+let prec = precip[d=($data),($tav)]*day ! mm/day
+
+set view 1
+shade/nolab/set/pal=low_red/lev=($lev)/nokey prec
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.2
+ppl shade
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "PRECIPITATION (mm/d)"
+label/nouser `($ppl$xlen)*.1` `($ppl$ylen)*.18` -1,0,0.2 "MODEL"
+
+
+set view 3
+use "/home/aschmitt/data/gpcp_precip/gpcp_mean.nc"
+let prcp_mg = precip[gx=prec,gy=prec,d=gpcp_mean.nc]
+shade/nolabels/set/pal=low_red/lev=($lev) prcp_mg
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.2
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shakey 1 0 0.2 1 3 9 
+ppl shade
+go land
+label/nouser `($ppl$xlen)*.1` `($ppl$ylen)*.18` -1,0,0.2 "GPCP"
+let q = log(prec)
+let p = log(prcp_mg)
+go regressxy

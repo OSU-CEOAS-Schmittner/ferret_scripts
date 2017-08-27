@@ -1,0 +1,74 @@
+!***********************************************************************
+! Description: plots top-of-atmosphere net radiation for 
+! PUMA versus ERBE observations
+!
+! use: go pl_toanet 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+go portraitNxN 2 2 10 12
+set win/asp=0.9
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal default
+
+use "/home/aschmitt/data/ncep/ncep.mean.nc"
+def grid/like=sat[d=($dataset)]/t=ssr mg	! UVic
+let mod1 = dnswr[($tim),d=($dataset)] 	! UVic
+let mod2 = uplwr[($tim),d=($dataset)] 	! UVic
+let mod3 = upsens[($tim),d=($dataset)] 	! UVic
+let mod4 = upltnt[($tim),d=($dataset)] 	! UVic
+
+!def grid/like=ssr[d=($dataset)]/t=ssr mg	! PUMA
+!let mod1 = ssr[($tim),d=($dataset)] 	! PUMA
+!let mod2 = str[($tim),d=($dataset)]*(-1) 	! PUMA
+!let mod3 = sshf[($tim),d=($dataset)]*(-1)	! PUMA
+!let mod4 = slhf[($tim),d=($dataset)] 	! PUMA
+
+let obs1 = ssr[g=mg@ave]*(-1)
+let obs2 = str[g=mg@ave]
+let obs3 = sshf[g=mg@ave]
+let obs4 = slhf[g=mg@ave]
+
+set view 1
+pl/set/nolab obs1[x=@ave]
+ppl plot
+pl/o/nolab mod1[x=@ave]
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Net Shortwave Radiation (W/m^2)"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.94` 1,0,0.17 "NCEP"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.86` 1,0,0.17 "@p2MODEL"
+
+set view 2
+pl/set/nolab/vlim=0:100 obs2[x=@ave]
+ppl plot
+pl/o/nolab mod2[x=@ave]
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Net Longwave (W/m^2)"
+
+set view 3
+pl/set/nolab/vlim=-60:60 obs3[x=@ave]
+ppl plot
+pl/o/nolab mod3[x=@ave]
+!pl/o/nolab/dash/col=black mod[x=@ave]*0
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Sensible Heat Flux (W/m^2)"
+
+set view 4
+pl/set/nolab/vlim=0:140 obs4[x=@ave]
+ppl plot
+pl/o/nolab mod4[x=@ave]
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Latent Heat Flux (W/m^2)"
+
+

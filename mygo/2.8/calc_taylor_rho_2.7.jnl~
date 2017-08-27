@@ -1,0 +1,19 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+let tem = temp[($tim),d=($dataset)]-273.15
+let sam = salinity[($tim),d=($dataset)]
+let rhom = rho_un(sam,tem,tem*0)-1000
+go set_ocean rhom
+use lev_annual
+set axis/depth zt
+set axis/modulo xt
+define grid/like=tem[d=1]/t=temp mg
+let temp_mg = temp[g=mg,d=lev_annual,l=1]
+let salt_mg = salt[g=mg,d=lev_annual,l=1]
+let theta_mg = theta_fo(salt_mg,temp_mg,z+0*temp_mg,0)
+let rho_mg = rho_un(salt_mg,theta_mg,0*temp_mg)-1000
+go set_ocean rho_mg mskhr[d=1]
+
+let p = rho_mg[d=lev_annual]
+let q = rhom
+go regressxyz

@@ -1,0 +1,82 @@
+!***********************************************************************
+! Description: plots monthly evaporation
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_evap_m 1 l=1:12@ave l=1:24@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=1:12@ave or l=2
+!            : $3 : model time (averaging) period e.g. l=1:24@ave or l=2
+!            : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(0,2.5,.25)(inf)
+def sym lev2 = lev=(-inf)(-1.5)(-1,1,.2)(1.5)(inf)
+go portraitNxN 2 2 5 20
+set win/asp=0.8
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal default
+
+use climatological_axes
+ca da climatological_axes
+
+let secperyr = 3600*24*365
+let fac = secperyr*(-1)
+
+use "/home/aschmitt/data/era/ERA_mo_clim.cdf"
+let obs0 = E[d=ERA_mo_clim.cdf]*fac
+
+let mod0 = evap[d=($dataset)]*fac/(-1000)	! UVic
+
+def grid/like=mod0/t=obs0/z=obs0 mg
+
+let obs = obs0[g=mg@ave,($otim)]
+let mod1 = mod0[($mtim)]
+let mod2 = mod1[gt=month_reg@mod]
+let mod = mod2[($otim)]
+
+let delta = mod-obs
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl axlsze 0,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) obs
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Evaporation (m/yr)"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.96` 1,0,0.12 ERA15
+
+
+set view 2
+shade/set/nolab/($lev)/nokey mod
+ppl axlsze 0.14,0
+ppl shade
+fill/nolab/o/($lev) mod
+go land
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.96` 1,0,0.12 ($model)
+
+set view 3
+shade/set/nolab/($lev2)/pal=light_centered delta
+ppl axlsze .14,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev2)/pal=light_centered delta
+go land
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.96` 1,0,0.12 MODEL-ERA15
+
+set view 4
+pl/set/nol/axes=0,1,0,1 obs[x=@ave], mod[x=@ave]
+ppl plot 
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.9` 1,0,0.2 @p2MODEL
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 ERA15
+

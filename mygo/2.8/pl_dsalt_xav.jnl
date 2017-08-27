@@ -1,0 +1,40 @@
+!***********************************************************************
+! Description: plots salinity sections for Model vs. 
+! observations
+!
+! use: go pl_dsalt_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_salt ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "SALINITY"
+define symbol lev = (-inf)(34,36,.2)(inf)
+define symbol lev2 = (-inf)(-1,1,.1)(inf)
+
+go pl_dvar_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

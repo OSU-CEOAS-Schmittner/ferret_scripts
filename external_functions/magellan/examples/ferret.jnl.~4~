@@ -1,0 +1,7 @@
+ ! NOAA/PMEL TMAP
+ ! FERRET v6.05  
+ ! Linux(g77) 2.6.9-22. - 07/27/07
+ ! 15-Aug-07 16:08     
+
+sh func pco2
+q

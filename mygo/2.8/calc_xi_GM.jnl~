@@ -1,0 +1,33 @@
+! calculates streamfunction for UVic model with GM (Gent/McWilliams tracer advection)
+go calc_xi
+let v_gm = ADV_VNTISO
+let va_gm = if MSKHR[g=v] eq 1 then ADV_VNTISO
+let vp_gm = if MSKHR[g=v] eq 2 then ADV_VNTISO
+let vi_gm = if MSKHR[g=v] eq 3 then ADV_VNTISO
+let vpi_gm = if ((MSKHR[g=v] eq 2) or (MSKHR[g=v] eq 3)) then ADV_VNTISO
+
+let v_gm_xdin = v_gm[x=@din] 
+let va_gm_xdin = va_gm[x=@din] 
+let vp_gm_xdin = vp_gm[x=@din] 
+let vi_gm_xdin = vi_gm[x=@din] 
+let vpi_gm_xdin = vpi_gm[x=@din] 
+let vs_gm_xdin = vs_gm[x=@din] 
+let cos_phi = cos(y*pi/180) + v_gm_xdin - v_gm_xdin
+let/title="GM Streamfunction Atlantic"/units="Sv" xi_gm_a = (va_gm_xdin[z=@iin]-va_gm_xdin[z=@din])*1e-6
+let/title="GM Streamfunction Pacific"/units="Sv" xi_gm_p = (vp_gm_xdin[z=@iin]-vp_gm_xdin[z=@din])*1e-6
+let/title="GM Streamfunction Indic"/units="Sv" xi_gm_i = (vi_gm_xdin[z=@iin]-vi_gm_xdin[z=@din])*1e-6
+let/title="GM Streamfunction Pacific, Indic"/units="Sv" xi_gm_pi = (vpi_gm_xdin[z=@iin]-vpi_gm_xdin[z=@din])*1e-6
+let/title="GM Streamfunction ACC"/units="Sv" xi_gm_s = (vs_gm_xdin[z=@iin]-vs_gm_xdin[z=@din])*1e-6
+let/title="GM Global Streamfunction"/units="Sv" xi_gm = (v_gm_xdin[z=@iin]-v_gm_xdin[z=@din])*1e-6
+let/units=Sv/title="GM Atlantic Overturning"  ov_gm=xi_gm_a[z=300:6000@max,y=0:90@max]
+
+let/title="Total Streamfunction Atlantic"/units="Sv" xi_tot_a = xi_a+xi_gm_a
+let/title="Total Streamfunction Pacific"/units="Sv" xi_tot_p = xi_p+xi_gm_p
+let/title="Total Streamfunction Indic"/units="Sv" xi_tot_i = xi_i+xi_gm_i
+let/title="Total Streamfunction Pacific, Indic"/units="Sv" xi_tot_pi = xi_pi+xi_gm_pi
+let/title="Total Streamfunction ACC"/units="Sv" xi_tot_s = xi_s+xi_gm_s
+let/title="Total Global Streamfunction"/units="Sv" xi_tot = xi+xi_gm
+let/units=Sv/title="Atlantic Overturning"  ov_tot=xi_tot_a[z=300:6000@max,y=0:90@max]
+
+
+

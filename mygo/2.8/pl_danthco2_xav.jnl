@@ -1,0 +1,41 @@
+!***********************************************************************
+! Description: plots delta anthropogenic CO2 sections for Model vs. 
+! observations
+!
+! use: go pl_danthco2_xav 1 l=1:2@ave l=19:20@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) preindustrial e.g. l=1:12@ave or l=2
+!            : $3 : time (averaging) 1990s e.g. l=1:12@ave or l=2
+!            : $4 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def symbol tim2 = $3%l=1%
+def sym model = $4%MODEL%
+
+go calc_taylor_anthco2 ($dataset) ($tim) ($tim2)
+
+use ($dataset)
+
+def sym varname = "DIC^A^n^t mmol/m^3"
+define symbol lev = (-inf)(1)(2)(5,55,5)(inf)/pal=my_rgb
+define symbol lev2 = (-inf)(-20,20,5)(inf)
+
+go pl_dvar_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+

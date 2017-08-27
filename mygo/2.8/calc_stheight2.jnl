@@ -1,0 +1,3 @@
+define symbol z0 = 925
+let rho_ave = rho_a[x=@ave]
+let sth = ($z0)*(1035/rho_ave[z=0:($z0)@ave]-1)

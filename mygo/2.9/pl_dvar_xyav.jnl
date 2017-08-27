@@ -1,0 +1,99 @@
+! plots zonally averaged values of tracer distributions compared
+! to observations
+
+go portraitNxN 2 5 7 55
+
+def view/xlim=0:0.59/ylim=0.675:1/text=.5 1
+def view/xlim=0.41:1/ylim=0.675:1/text=.5 2
+def view/xlim=0:0.59/ylim=0.5063:.8313/text=.5 3
+def view/xlim=0.41:1/ylim=0.5063:.8313/text=.5 4
+def view/xlim=0:0.59/ylim=0.3375:.6625/text=.5 5
+def view/xlim=0.41:1/ylim=0.3375:.6625/text=.5 6
+def view/xlim=0:0.59/ylim=0.1688:.4937/text=.5 7
+def view/xlim=0.41:1/ylim=0.1688:.4937/text=.5 8
+def view/xlim=0:0.59/ylim=0.:.325/text=.5 9
+def view/xlim=0.41:1/ylim=0.:.325/text=.5 10
+
+set axis/depth depth
+
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]
+
+let zkm = z[gz=depth]/1000
+def axis/from_data/name=azkm/depth zkm
+
+set view 1
+plot/set/nolab/($opt) pmasked[x=@ave,y=@ave,gz=azkm@asn],qmasked[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.14
+ppl plot
+
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Global"
+
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.65` 1,0,0.2  "Observations"
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.5` 1,0,0.2  "@p2 ($model)"
+
+set view 2
+plot/set/nolab/($dopt) qmasked[x=@ave,y=@ave,gz=azkm@asn]-pmasked[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.
+ppl plot
+plot/o/dash/col=black/nol qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]*0
+
+set view 3
+plot/set/nolab/($opt) pmasked_a[x=@ave,y=@ave,gz=azkm@asn],qmasked_a[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.14
+ppl plot
+
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Atlantic"
+
+set view 4
+plot/set/nolab/($dopt) qmasked_a[x=@ave,y=@ave,gz=azkm@asn]-pmasked_a[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.
+ppl plot
+plot/o/dash/col=black/nol qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]*0
+
+set view 5
+plot/set/nolab/($opt) pmasked_i[x=@ave,y=@ave,gz=azkm@asn],qmasked_i[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.14
+ppl plot
+
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Indian"
+
+set view 6
+plot/set/nolab/($dopt) qmasked_i[x=@ave,y=@ave,gz=azkm@asn]-pmasked_i[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.
+ppl plot
+plot/o/dash/col=black/nol qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]*0
+
+set view 7
+plot/set/nolab/($opt) pmasked_p[x=@ave,y=@ave,gz=azkm@asn],qmasked_p[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.14
+ppl plot
+
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Pacific"
+
+set view 8
+plot/set/nolab/($dopt) qmasked_p[x=@ave,y=@ave,gz=azkm@asn]-pmasked_p[x=@ave,y=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.
+ppl plot
+plot/o/dash/col=black/nol qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]*0
+
+set view 9
+plot/set/nolab/($opt) pmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn],qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]
+ppl AXLSZE 0.14 0.14
+ppl xfor ($xfor)
+ppl plot
+
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Southern Ocean"
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 ($varname)
+
+set view 10
+plot/set/nolab/($dopt) qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]-pmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]
+ppl AXLSZE 0.14 0.
+ppl xfor ($xford)
+ppl plot
+plot/o/dash/col=black/nol qmasked[x=@ave,y=90s:40s@ave,gz=azkm@asn]*0
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 Difference M-O
+
+

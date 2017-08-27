@@ -1,0 +1,32 @@
+! compares simulated nitrate profiles horizontally averaged in each basin
+! use: yes? use mydata.nc; set reg/l=10; go pl_anthco2_xyav.jnl (dataset) (time1800) (time1995)
+def symbol dataset = $1%1%
+def symbol tim1800 = $2%l=1:2@ave%
+def symbol tim1995 = $3%l=19:20@ave%
+
+let RHO = RHO_UN(SALINITY,TEMP-273.15,0*TEMP)
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9 ! ocean mean salinity
+let dic2 = dic[d=($dataset)]*salinity[d=($dataset)]/sbar ! normalize with salinity to get insitu concentration
+let dic2 = dic[d=($dataset)]
+let/title="Anthropogenic Carbon"/units="umol/kg" dic1 = (dic2[($tim1995)]-dic2[($tim1800)])/rho*1e6 ! convert from mol/m^3 to umol/kg
+go set_ocean dic1
+
+use "/home/aschmitt/data/glodap/AnthCO2.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dic[d=($dataset)]/t=antco2 mg
+let dic_mg = antco2[g=mg,d=AnthCO2]
+go set_ocean dic_mg mskhr[d=($dataset)]
+use "/home/aschmitt/data/glodap/AnthCO2_error.nc"
+let error_mg = antco2_err[g=mg,d=AnthCO2_error]
+let dpe_mg = dic_mg + error_mg
+let dme_mg = dic_mg - error_mg
+go set_ocean dpe_mg mskhr[d=($dataset)]
+go set_ocean dme_mg mskhr[d=($dataset)]
+
+let p = dic_mg[d=AnthCO2]
+let q = dic1
+go regressxyz
+go set_ocean pmasked mskhr[d=($dataset)]
+go set_ocean qmasked mskhr[d=($dataset)]

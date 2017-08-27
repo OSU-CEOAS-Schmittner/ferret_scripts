@@ -1,0 +1,59 @@
+!***********************************************************************
+! Description: plots precipitation
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_precip 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(0,4,.2)(inf)
+!go portraitNxN 2 2 95 14
+go portraitNxN 2 3 95 30
+!set win/asp=0.9
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal default
+let secperyear = 3600*24*365
+
+use "/home/aschmitt/data/ncep/ncep.mean.nc"
+
+set view 1
+let preco = preci*secperyear
+shade/set/nolab/($lev) preco
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) preco
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Precipitation (m/yr)"
+label/nouser `($ppl$xlen)*0.75` `($ppl$ylen)*0.85` 0,0,0.2 "NCEP"
+
+
+set view 3
+let precm = (lsp[($2),d=($dataset)]+cp[($2),d=($dataset)])*secperyear
+shade/set/nolab/($lev) precm
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) precm
+go land
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)
+
+set view 5
+let yy = preco[x=@ave]*0+y
+let ym = precm[x=@ave]*0+z
+pl/set/nol/vs/li ym, precm[x=@ave]
+ppl xlab "Latitude"
+ppl plot 
+pl/nol/o/vs/li yy, preco[x=@ave]
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.9` 1,0,0.2 ($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 @p2NCEP

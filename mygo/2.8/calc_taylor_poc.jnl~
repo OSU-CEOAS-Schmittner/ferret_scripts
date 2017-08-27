@@ -1,0 +1,18 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+! convert from mol N / m^3 to ug/kg
+let pocm = detr[d=($dataset),($tim)]*7*12*1e6/1000
+
+go set_ocean pocm
+
+use "/home/aschmitt/data/lam10gbc/lam10gbc.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=detr[d=($dataset)]/t=poc mg
+let poc_mg = poc[g=mg@ave,d=lam10gbc]
+go set_ocean poc_mg mskhr[d=($dataset)]
+
+use ($dataset)
+let p = poc_mg[d=lam10gbc]
+let q = pocm
+go regressxyz

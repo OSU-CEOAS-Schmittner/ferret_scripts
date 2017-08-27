@@ -1,0 +1,83 @@
+!***********************************************************************
+! Description: plots salinity difference between FOAM and Levitus
+!***********************************************************************
+
+SET DATA/SAVE
+go set_drain2 salt
+use levitus_climatology
+go portraitNxN 2 4 6 20
+SET DATA/RESTORE
+
+define grid/like=salt[d=levitus_climatology] lg
+let dsalt = salt[g=lg]-salt[d=levitus_climatology]
+
+define symbol lev = (-3,3,0.1)
+define symbol shopt = lev=($lev)/nokey
+define symbol var = dsalt
+palette light_centered
+
+set view 1
+define symbol depth = z=10
+go pl_dsalt2
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.27` 0,0,0.2 "MODEL - LEVITUS SALINITY"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 2
+define symbol depth = z=100
+define symbol shopt = lev=($lev)
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 3
+define symbol depth = z=500
+define symbol shopt = lev=($lev)/nokey
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 4
+define symbol depth = z=1000
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 5
+define symbol depth = z=1500
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 6
+define symbol depth = z=2000
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 7
+define symbol depth = z=3000
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+set view 8
+define symbol depth = z=4000
+go pl_dsalt2
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "($depth)"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

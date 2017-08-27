@@ -1,0 +1,29 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+go portrait
+set reg/x=120:480
+set axis/modulo xt
+def view/xlim=0:1/ylim=.35:1/text=1.5 1
+def view/xlim=0:1/ylim=0:.65/text=1.5 2
+def sym opt=lev=(0,44,4)(inf)
+
+set view 1
+use "/raid1/aschmitt/data/behrenfeld05/pp.nc"
+def grid/like=phyt[d=($dataset)]/t=c mg
+let phyt_obs = c[($tim),g=mg@ave]
+ppl axlsze 0 .11
+sha/nolab/($opt) phyt_obs
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.1` 0,0,0.14 "Phytoplankton Biomass (g C m^-^3)"
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*.04` 1,0,0.14 "Observations"
+
+set view 2
+let year = 3600*24*365
+let redctn = 7
+let fac = redctn*12*1000
+let dt = temp-temp[k=1]
+let mld = dt[z=@loc:-0.5]
+let pmskd = if z le mld then phyt
+let phyt_model = pmskd[z=@ave,d=($dataset),($tim)]*fac
+ppl axlsze .11 .11
+sha/nolab/($opt) phyt_model
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*.04` 1,0,0.14 "Model"

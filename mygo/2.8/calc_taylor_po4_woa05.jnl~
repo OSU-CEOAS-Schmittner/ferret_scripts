@@ -1,0 +1,28 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+let nutrm = phosphate[d=($dataset),($tim)]*1000
+go set_ocean nutrm
+
+!use "/raid1/aschmitt/data/woa05/p00an1.nc"
+use "/raid1/aschmitt/data/woa05/p00mn1.nc"
+let p00an1 = p00mn1
+set axis/depth zt
+set axis/modulo xt
+define grid/like=phosphate[d=($dataset)]/t=p00an1 mg
+!let po4_mg = P00AN1[g=mg@ave,d=p00an1,l=1]
+let po4_mg = P00AN1[g=mg@ave,d=p00mn1,l=1]
+go set_ocean po4_mg mskhr[d=($dataset)]
+
+use ($dataset)
+let p = po4_mg
+let q = nutrm
+
+use "/raid1/aschmitt/data/woa05/p00se1.nc"
+let error_mg = P00SE1[g=mg@ave,d=p00se1,l=1]/(3.6*1.8)^.5
+use "/raid1/aschmitt/data/woa05/p00sd1.nc"
+!let error_mg = P00SD1[g=mg@ave,d=p00sd1,l=1]
+! perr = error of obs + model error
+! model error can be estimated by Q_MIN_P_SQ[X=@AVE,Y=@AVE,Z=@AVE]^0.5
+let model_error = .202
+let perr = if (error_mg) then ((error_mg^2 + model_error^2)^0.5) else model_error
+go regressxyz2

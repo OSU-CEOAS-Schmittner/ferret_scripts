@@ -1,0 +1,24 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+go portrait
+set reg/x=180w:180e
+set axis/modulo xt
+def view/xlim=0:1/ylim=.35:1/text=1.5 1
+def view/xlim=0:1/ylim=0:.65/text=1.5 2
+def sym opt=lev=(0,400,30)(inf)
+
+set view 1
+use "/raid1/aschmitt/data/behrenfeld05/pp.nc"
+let npp_obs = pp[l=@ave]*365/1000
+ppl axlsze 0 .11
+sha/nolab/($opt) npp_obs
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.1` 0,0,0.14 "Net Primary Production (g C m^-^2 a^-^1)"
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*.04` 1,0,0.14 "Observations"
+
+set view 2
+let year = 3600*24*365
+let redctn = 7
+let fac = redctn*12*year
+ppl axlsze .11 .11
+sha/nolab/($opt) onpp[z=@din,d=($dataset),($tim)]*fac
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*.04` 1,0,0.14 "Model"

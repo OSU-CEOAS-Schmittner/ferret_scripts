@@ -1,0 +1,91 @@
+!***********************************************************************
+! Description: plots net primary production for Model vs. 
+! observations from Westberry et al. 
+!
+! use: go pl_npp l=1:12@ave 1 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period obs e.g. l=1:12@ave or l=2
+!            : $3 : time (averaging) period model
+!            : $4 : model acromym
+!
+!***********************************************************************
+
+def sym dataset = $1%1%
+def sym tobs = $2%l=1%
+def sym tmod = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(0)(2)(5,30,5)(50)(inf)
+go portraitNxN 2 3 90 30
+!set win/asp=0.9
+set reg/x=120:480
+set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal centered
+pal blue_darkred
+pal default
+
+use "/home/aschmitt/data/westberry07gbc/mu_mo_clim.nc"
+use "/home/aschmitt/data/westberry07gbc/c_mo_clim.nc"
+let/title="NPP"/units="mgC/(m^3 d)" npp = mu[d=mu_mo_clim.nc]*carb[d=c_mo_clim.nc]
+let npp50 = npp[x=@din,y=@din]*50/1000*1e-15*365
+
+use ($dataset)
+set reg/x=30:390
+
+def grid/x=phyt[d=($dataset)]/y=phyt[d=($dataset)] mg
+let mumg0 = mu[g=mg@ave,d=mu_mo_clim.nc]
+let carbmg0 = carb[g=mg@ave,d=c_mo_clim.nc]
+let mumg0 = mu[g=mg,d=mu_mo_clim.nc]
+let carbmg0 = carb[g=mg,d=c_mo_clim.nc]
+let/title="NPP"/units="mgC/(m^3 d)" nppmg0 = mumg0*carbmg0
+!let nppmg0 = npp[g=mg@ave]
+
+let secperday = 3600*24
+let redctn = 7
+let mnpp = secperday*(onpp+npp_D)*redctn*12*1000
+
+let npp50mg = pmasked[x=@din,y=@din]*50/1000*1e-15*365
+let mnpp50 = qmasked[x=@din,y=@din,k=1]*50/1000*1e-15*365
+
+let nppmg = nppmg0+q*0 ! masking
+let nppmg = nppmg0 ! masking
+let p = nppmg[($tobs)]
+let q = mnpp[k=1,d=($dataset),($tmod)]
+
+
+set view 1
+shade/set/nolab/($lev) p
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) p
+sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Net Primary Production (mgC/(m^3 d)"
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 "OBS"
+
+set view 3
+
+shade/set/nolab/($lev) q
+ppl shakey 1,1,0.16
+ppl AXLSZE 0. 0.16
+ppl shade
+fill/nolab/o/($lev) q
+sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 ($model)
+
+set view 5
+pl/set/nolab/vlim=0:35/thick=3 p[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl yfor (i2)
+ppl plot
+pl/nolab/o/li/col=red/thick=3 q[x=@ave]
+pl/o/nolab/vs/thick=3/li/col=black {-60,-40},{30,30}; label -85 30  -1,0,0.2 "OBS"
+pl/o/nolab/vs/li/col=red/thick=3 {-60,-40},{25,25}; label -85 25  -1,0,0.2 "MODEL"
+
+can reg/x
+
+go regressxy
+list npp50mg,mnpp50

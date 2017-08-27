@@ -1,0 +1,31 @@
+!***********************************************************************
+! Description: plots dFe horizontally averaged for Model vs. 
+! observations
+!
+! use: go pl_dfe_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_dfe ($dataset) ($tim)
+
+use ($dataset)
+
+def sym opt=hlim=0:2:0.2
+def sym labx1=1.1
+def sym labxd=0.3
+def sym laby1=800
+def sym laby2=1500
+
+def sym varname = "DFe (nmol/m^3)"
+def sym xfor=(f4.1)
+def sym xford=(f4.1)
+
+go pl_dvar_xyav

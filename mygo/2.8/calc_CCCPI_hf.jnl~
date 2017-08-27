@@ -1,0 +1,30 @@
+! calculate CCCPI for historic forcing runs
+set mem/size=30
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+go calc_taylor_c14b_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat r,stdr,rms
+go calc_taylor_po4_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_no3_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_aou_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_temp_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_salt_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_dic_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_alk_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_cfc11_eo ($dataset) ($tim)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+!can da/all
+!use "/raid1/aschmitt/UVic/2.7/SO05/phosphate/rfactor.3/cfc/time_mean.07811.01.01.nc"
+!go calc_taylor_cfc11_2.7 1 l=9:10@ave
+!list/form=(4f7.4)/nohead/file=CCCPI.dat/append r,stdr,rms_prime,rms
+!can da/all
+!use time_mean.01810.01.01.nc
+!go calc_taylor_flux_carbon_2.7 1 l=20
+!list/form=(4f7.4)/nohead/file=CCCPI.dat/append r,stdr,rms_prime,rms

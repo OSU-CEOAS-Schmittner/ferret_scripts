@@ -1,0 +1,14 @@
+let dc14 = (c14/dic/dstd-1)*1000
+! standard ratio from http://www.rafterradiocarbon.co.nz/glossary.htm#M
+let dstd = 1.176e-12
+go set_ocean dc14
+
+use "/raid1/aschmitt/data/glodap/bkgc14.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dc14[d=($dataset)]/t=bkgc14 mg
+let c14_mg = bkgc14[g=mg,d=bkgc14]
+go set_ocean c14_mg mskhr[d=($dataset)]
+let p = c14_mg
+let q = dc14
+go regressxyz

@@ -1,0 +1,93 @@
+!***********************************************************************
+! Description: plots pot. temperature for Model vs. Levitus observations
+!              at a section in the Atlantic and one in the Pacific
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $2 : data set e.g. 1 or model.output.nc
+!
+!***********************************************************************
+
+def sym tav = $1
+let temp_mod = temp-273.15
+use lev_annual
+let temp_lev = theta_fo(salt[d=lev_annual],temp[d=lev_annual],z+0*temp[d=lev_annual],0)
+go portraitNxN 2 2 16 12
+set win/asp=1
+use $2
+
+set view 1
+define symbol lev = (-2,30,1)
+set reg/x=25w/z=0:5300
+shade/nolabels/set/pal=default/lev=($lev)/nokey temp_mod[($tav)]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+fill/o/nolabels/pal=default/lev=($lev)/nokey temp_mod[($tav)]
+con/nolabels/o/pal=default/lev=($lev)/nokey temp_mod[($tav)]
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(temp_mod[($tav)],-99)
+label/nouser `($ppl$xlen)` `($ppl$ylen)*1.1` 0,0,0.2 "Pot. Temperature at 25W (Atlantic)"
+label/nouser `($ppl$xlen)*0.8` `($ppl$ylen)*0.1` 0,0,0.2 "Model"
+
+set view 2
+shade/nolabels/set/pal=default/lev=($lev) temp_lev[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.0, 0.12
+ppl shade
+fill/o/nolabels/pal=default/lev=($lev) temp_lev[($tav)]
+con/o/nolabels/pal=default/lev=($lev) temp_lev[($tav)]
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(temp_lev[($tav)],0)
+label/nouser `($ppl$xlen)*0.8` `($ppl$ylen)*0.1` 0,0,0.2  "Observations"
+ppl SHASET RESET
+
+set view 3
+set reg/x=150w
+shade/nolabels/set/pal=default/lev=($lev)/nokey temp_mod[($tav)]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+fill/o/nolabels/pal=default/lev=($lev)/nokey temp_mod[($tav)]
+con/nolabels/o/pal=default/lev=($lev)/nokey temp_mod[($tav)]
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(temp_mod[($tav)],-99)
+label/nouser `($ppl$xlen)` `($ppl$ylen)*1.1` 0,0,0.2 "Pot. Temperature at 150W (Pacific)"
+label/nouser `($ppl$xlen)*0.8` `($ppl$ylen)*0.1` 0,0,0.2 "Model"
+
+set view 4
+shade/nolabels/set/pal=default/lev=($lev) temp_lev[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.0, 0.12
+ppl shade
+fill/o/nolabels/pal=default/lev=($lev) temp_lev[($tav)]
+con/o/nolabels/pal=default/lev=($lev) temp_lev[($tav)]
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(temp_lev[($tav)],0)
+label/nouser `($ppl$xlen)*0.8` `($ppl$ylen)*0.1` 0,0,0.2  "Observations"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,65 @@
+!***********************************************************************
+! Description: plots sea surface temperature
+! PUMA versus WOA05
+!
+! use: go pl_sst 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(-2,34,2)
+go portraitNxN 2 2 5 20
+set win/asp=0.8
+set reg/x=180:540
+!set axis/modulo xt
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal default
+
+use "/home/aschmitt/data/woa05/t00an1.nc"
+def grid/like=temperature[d=($dataset)]/t=t00an1 mg
+let tobs = t00an1[g=mg@ave,d=t00an1.nc]
+
+set view 1
+shade/set/nolab/($lev) tobs[k=1]
+ppl axlsze 0.,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) tobs[k=1]
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "SST"
+label/nouser `($ppl$xlen)*0.93` `($ppl$ylen)*0.03` 1,0,0.16 "WOA05"
+
+
+set view 2
+let sst = temperature[($2),d=($dataset),k=1]-273.15
+shade/set/nolab/($lev)/nokey sst
+ppl axlsze .14,0
+ppl shade
+fill/nolab/o/($lev) sst
+go land
+label/nouser `($ppl$xlen)*0.93` `($ppl$ylen)*0.03` 1,0,0.16 ($model)
+
+set view 3
+let dsst = sst - tobs[k=1,l=1]
+shade/set/nolab/lev=(-inf)(-8,8,2)(inf)/pal=light_centered dsst
+ppl shakey 1,1,0.16
+ppl axlsze .14,.14
+ppl shade
+fill/nolab/o/lev=(-10,10,2)/pal=light_centered dsst
+go land
+label/nouser `($ppl$xlen)*0.93` `($ppl$ylen)*0.03` 1,0,0.16 MODEL-OBS
+
+set view 4
+pl/set/nolab/axes=0,1,0,1 tobs[k=1,x=@ave], sst[x=@ave]
+ppl yfor (i2)
+ppl plot
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.95` 1,0,0.15 OBS
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.9` 1,0,0.15 @p2MODEL

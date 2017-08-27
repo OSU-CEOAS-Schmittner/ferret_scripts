@@ -1,0 +1,52 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+set mem/size=30
+let nutrm = phosphate[d=($dataset),($tim)]*1000
+let o2m = oxygen
+let tempm = temperature
+let aou1 = (o2sat(tempm-273.15,salinity)-o2m)*1000
+let aoum = aou1[d=($dataset),($tim)]
+let redptom = 1/170
+let prem = redptom*aoum
+let pstarm = nutrm-prem
+go set_ocean pstarm mskhr[d=($dataset)]
+
+!use "/raid1/aschmitt/data/woa05/p00an1.nc"
+use "/raid1/aschmitt/data/woa05/p00mn1.nc"
+let p00an1 = p00mn1
+set axis/depth zt
+set axis/modulo xt
+define grid/like=phosphate[d=($dataset)]/t=p00an1 mg
+!let po4_mg = P00AN1[g=mg@ave,d=p00an1,l=1]
+let po4_mg = P00AN1[g=mg@ave,d=p00mn1,l=1]
+
+
+!use "/raid1/aschmitt/data/woa05/A00an1.nc"
+use "/raid1/aschmitt/data/woa05/A00mn1.nc"
+!           Convert from ml/l to mmol/m^3
+!let aou_lev = a00an1[d=A00an1]/22391.6*1e6
+let aou_lev = a00mn1[d=A00mn1]/22391.6*1e6
+
+set axis/depth zt
+set axis/modulo xt
+define grid/like=aoum[d=($dataset)]/t=aou_lev mg
+let aou_mg = aou_lev[g=mg@ave,l=1]
+let redpto = 1/170 
+let pstar_mg = po4_mg-redpto*aou_mg
+
+go set_ocean pstar_mg mskhr[d=($dataset)]
+
+use ($dataset)
+let p = pstar_mg
+let q = pstarm
+
+!use "/raid1/aschmitt/data/woa05/p00se1.nc"
+!let error_mg = P00SE1[g=mg@ave,d=p00se1,l=1]/(3.6*1.8)^.5
+!use "/raid1/aschmitt/data/woa05/p00sd1.nc"
+!let error_mg = P00SD1[g=mg@ave,d=p00sd1,l=1]
+! perr = error of obs + model error
+! model error can be estimated by Q_MIN_P_SQ[X=@AVE,Y=@AVE,Z=@AVE]^0.5
+let model_error = .202
+!let perr = if (error_mg) then ((error_mg^2 + model_error^2)^0.5) else model_error
+let perr = model_error
+go regressxyz2

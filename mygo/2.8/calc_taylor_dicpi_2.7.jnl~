@@ -1,0 +1,26 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+let RHO = RHO_UN(SALINITY,TEMP-273.15,0*TEMP)
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9 ! ocean mean salinity
+let dic2 = dic*salinity/sbar ! normalize with salinity to get insitu concentration
+!let dic2 = dic[($tim)]
+let/title="Total Carbon Dioxide"/units="umol/kg" dic1 = dic2[($tim),d=($dataset)]/rho*1e6 ! convert from mol/m^3 to umol/kg
+go set_ocean dic1
+
+use "/raid1/aschmitt/data/glodap/TCO2.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dic[d=($dataset)]/t=tco2 mg
+let dic_mg = tco2[g=mg,d=TCO2]
+go set_ocean dic_mg mskhr[d=($dataset)]
+let error_mg = tco2_err[g=mg,d=TCO2]
+let dpe_mg = dic_mg + error_mg
+let dme_mg = dic_mg - error_mg
+go set_ocean dpe_mg mskhr[d=($dataset)]
+go set_ocean dme_mg mskhr[d=($dataset)]
+
+let p = dic_mg[d=TCO2]
+let q = dic1
+go regressxyz

@@ -1,0 +1,104 @@
+go portrait
+def view/xlim=0:0.53/ylim=0.55:1/text=0.8 1
+def view/xlim=0.297:0.72/ylim=0.55:1/text=0.8 2
+def view/xlim=0.487:1/ylim=0.55:1/text=0.8 3
+def view/xlim=0:0.53/ylim=0.326:.776/text=0.8 4
+def view/xlim=0.297:0.72/ylim=0.326:.776/text=0.8 5
+def view/xlim=0.487:1/ylim=0.326:.776/text=0.8 6
+
+def symbol lev = lev=(-inf)(-0.8,1.3,0.1)(inf)
+def symbol levc = lev=(-inf)(-2,2,0.2)(inf)
+
+use "/home/aschmitt/data/c13/d13c.nc"
+
+use tavg.01810.01.01.nc
+go calc_dc13
+set axis/depth zt
+
+def axis/x=5e:355e:10/modulo lon10
+def axis/y=85s:85n:10 lat10
+def grid/like=dc13[d=1]/x=lon10/y=lat10/z=zt gr10
+def grid/like=dic[d=2] mg
+
+let dc13_mg = dc13[d=1,g=mg@ave]
+
+let p = dc13_mg
+let q = ddic[l=20]
+go regressxyz
+
+go set_ocean pmasked
+
+go set_ocean qmasked
+
+let zkm = z[gz=zt]/1000
+def axis/from_data/name=azkm/depth zkm
+
+pal orange_blue
+
+set view 1
+sha/set/($lev)/nol/y=59.9s:79.9n/vlim=0:5.49 pmasked_a[x=@ave,gz=azkm@asn]
+ppl shakey 1 0 0.14 2 3 9 1.3 8.1 4.8 4.95
+ppl AXLSZE 0. 0.14
+ppl yfor (i1)
+ppl ylab "Depth (km)"
+ppl shade
+fill/o/($lev)/nol pmasked_a[x=@ave,gz=azkm@asn]
+con/o/($levc)/nol pmasked_a[x=@ave,gz=azkm@asn]
+sha/pal=grey/o/lev=(0)/nol missing(pmasked_a[x=@ave,gz=azkm@asn],0)
+label/nouser `($ppl$xlen)*1.3` `($ppl$ylen)*1.39` 0,0,0.18 "@SGd@SR^1^3C (permil)"
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.08` 0,0,0.16 "ATLANTIC"
+!label/nouser `($ppl$xlen)*.03` `($ppl$ylen)*.03` -1,0,0.16 "Water Column"
+
+set view 2
+sha/vlim=0:5.49/set/nokey/($lev)/nol/y=59.9s:26n/axes=1,1,0,1 pmasked_i[x=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.
+ppl shade
+sha/pal=grey/o/lev=(0)/nol missing(pmasked_i[x=@ave,gz=azkm@asn],0)
+fill/o/($lev)/nol pmasked_i[x=@ave,gz=azkm@asn]
+con/o/($levc)/nol pmasked_i[x=@ave,gz=azkm@asn]
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.08` 0,0,0.16 "INDIAN"
+
+
+set view 3
+sha/vlim=0:5.49/set/nokey/($lev)/nol/y=59.9s:59.9n/axes=1,1,0,1 pmasked_p[x=@ave,gz=azkm@asn]
+ppl AXLSZE 0. 0.
+ppl shade
+sha/pal=grey/o/lev=(0)/nol missing(pmasked_p[x=@ave,gz=azkm@asn],0)
+fill/o/($lev)/nol pmasked_p[x=@ave,gz=azkm@asn]
+con/o/($levc)/nol pmasked_p[x=@ave,gz=azkm@asn]
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.08` 0,0,0.16 "PACIFIC"
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*.5` 0,90,0.16 "Observations"
+! (CDIAC)"
+
+set view 4
+set reg/l=20
+sha/vlim=0:5.49/set/nokey/($lev)/nol/y=59.9s:79.9n/axes=0,1,1,1 qmasked_a[x=@ave,gz=azkm@asn]
+ppl AXLSZE 0.1 0.14
+ppl yfor (i1)
+ppl ylab "Depth (km)"
+ppl xlab "Latitude"
+ppl shade
+fill/o/($lev)/nol qmasked_a[x=@ave,gz=azkm@asn]
+con/o/($levc)/nol qmasked_a[x=@ave,gz=azkm@asn]
+sha/pal=grey/o/lev=(0)/nol missing(qmasked_a[x=@ave,gz=azkm@asn],0)
+
+set view 5
+sha/vlim=0:5.49/set/nokey/($lev)/nol/y=59.9s:26n/axes=0,1,0,1 qmasked_i[x=@ave,gz=azkm@asn]
+ppl AXLSZE 0.1 0.
+ppl xlab "Latitude"
+ppl shade
+fill/o/($lev)/nol qmasked_i[x=@ave,gz=azkm@asn]
+con/o/($levc)/nol qmasked_i[x=@ave,gz=azkm@asn]
+sha/pal=grey/o/lev=(0)/nol missing(qmasked_i[x=@ave,gz=azkm@asn],0)
+
+set view 6
+sha/vlim=0:5.49/set/nokey/($lev)/nol/y=59.9s:59.9n/axes=0,1,0,1 qmasked_p[x=@ave,gz=azkm@asn]
+ppl AXLSZE 0.1 0.
+ppl xlab "Latitude"
+ppl shade
+fill/o/($lev)/nol qmasked_p[x=@ave,gz=azkm@asn]
+con/o/($levc)/nol qmasked_p[x=@ave,gz=azkm@asn]
+sha/pal=grey/o/lev=(0)/nol missing(qmasked_p[x=@ave,gz=azkm@asn],0)
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*.5` 0,90,0.16 "Model"
+
+ca reg

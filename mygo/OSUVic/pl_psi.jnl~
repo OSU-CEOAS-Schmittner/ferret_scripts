@@ -1,0 +1,72 @@
+! calculates PUMA's meridional mass streamfunction [10^10 kg/s]
+! according to Peixoto & Oort eq. (7.8a)
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def symbol model = $4%Model%
+go portraitNxN 2 2 90 20
+def view/xlim=0:1/ylim=.385:1/text=1 1
+def view/xlim=0:1/ylim=0:.615/text=1 3
+palette default
+let g = 9.81
+let pi = acos(-1)
+let rad = 6371e3
+let cosy = cos(yy*pi/180)
+let v1 = v[($mtim),d=($dataset)]
+let v2 = v1[gt=month_reg@mod]
+let v3 = v2[($otim)]
+let vv = v3[x=@ave,z=@iin]
+let yy = vv*0+y
+let fac = 2*pi*rad*cosy/g*1e2
+let psi1 = vv*fac*1e-10
+let psi2 = (vv-v3[x=@ave,z=@din])*fac*1e-10
+let psi = psi1
+let psi = (psi1+psi2)/2
+
+use climatological_axes
+ca da climatological_axes
+
+!sha/lev=(-25,25,2) psi
+!fill/lev=(-25,25,2)/o
+!con/o/lev=(-25,25,2) psi
+
+let u1 = u[($mtim),d=($dataset)]
+let u2 = u1[gt=month_reg@mod]
+let u3 = u2[($otim)]
+let uu = u3[x=@ave]
+
+set view 1
+palette greyscale
+sha/set/vlim=100:1000/hlim=90s:90n/nolab/lev=(-inf)(-5,45,5)(inf) uu
+ppl axlsze 0.,.14
+ppl ylab Z (hPa)
+ppl shade
+
+fill/nolab/lev=(-inf)(-5,45,5)(inf)/o uu
+con/nolab/lev=(0)/col=red/o/size=0.0001 uu
+con/nolab/col=black/o/lev=(-24,24,2)/size=0.13 psi
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.15 "Zonal Velocity (m/s, color)"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.05` 0,0,0.15 "Meridional Streamfunction (kg/s)"
+label/nouser `($ppl$xlen)` `($ppl$ylen)*0.95` 1,0,0.18 ($model)
+
+set view 3
+use "/home/aschmitt/data/ncep/pressure/uwnd.mon.ltm.nc"
+use "/home/aschmitt/data/ncep/pressure/vwnd.mon.ltm.nc"
+let uuo = uwnd[d=uwnd.mon.ltm.nc,x=@ave,($otim)]
+let vvo = vwnd[d=vwnd.mon.ltm.nc,x=@ave,($otim)]
+let yy = vvo*0+y
+let psio1 = vvo[z=@iin]*fac*1e-10
+let psio2 = (vvo[z=@iin]-vvo[z=@din])*fac*1e-10
+let psio = (psio1+psio2)/2
+
+sha/set/vlim=100:1000/hlim=90s:90n/nolab/lev=(-inf)(-5,45,5)(inf) uuo
+ppl xlab LATITUDE
+ppl axlsze 0.14,.14
+ppl ylab Z (hPa)
+ppl shade
+
+fill/nolab/lev=(-inf)(-5,45,5)(inf)/o uuo
+con/nolab/lev=(0)/col=red/o/size=0.0001 uuo
+con/nolab/col=black/o/lev=(-24,24,2)/size=0.13 psio
+label/nouser `($ppl$xlen)` `($ppl$ylen)*0.95` 1,0,0.18 NCEP

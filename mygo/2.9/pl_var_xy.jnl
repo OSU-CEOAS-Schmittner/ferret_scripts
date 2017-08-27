@@ -1,0 +1,24 @@
+! plots maps of tracer distributions compared to observations
+
+go portraitNxN 2 2 90 20
+set reg/x=120:480
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal blue_orange
+
+set view 1
+sha/($lev)/nol p[z=@ave]
+fill/o/($lev)/nol p[z=@ave]
+sha/pal=grey/o/lev=(0)/nol missing(p[z=@ave],0)
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.08` 0,0,0.18 ($varname)
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*0.04` 1,0,0.19 "OBS"
+go land
+
+set view 3
+sha/($lev)/nol q[z=@ave]
+fill/o/($lev)/nol q[z=@ave]
+sha/pal=grey/o/lev=(0)/nol missing(q[z=@ave],0)
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*0.04` 1,0,0.19 ($model)
+!go land
+

@@ -1,0 +1,42 @@
+!***********************************************************************
+! Description: plots delta alk sections for Model vs. 
+! observations
+!
+! use: go pl_ddic_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_aou ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "Apparent Oxygen Utilization (mmol/m^3)"
+define symbol lev = lev=(-inf)(0,300,20)(inf)
+define symbol levc = lev=(0,400,40)(inf)
+define symbol levd = lev=(-inf)(-60,60,10)(inf)
+define symbol levdc = lev=(-inf)(-180,180,20)(inf)
+pal blue_orange
+
+go pl_dvar_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+

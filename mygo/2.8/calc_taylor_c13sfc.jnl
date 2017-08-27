@@ -1,0 +1,27 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+!let rstd = 0.0112372
+let rstd = 1.
+let rdic = dic13/dic
+let ddic = (rdic/rstd-1)*1000
+
+let c13m = ddic[d=($dataset),($tim)]
+go set_ocean c13m
+
+!use "/raid1/aschmitt/data/c13/cdiac3/d13c.nc"
+!use "/home/aschmitt/data/c13/d13c.nc"
+use "/home/aschmitt/data/c13/gruber01/dc13_vs10a_v2.cdf"
+!set axis/modulo xax5
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dic13[d=($dataset)]/t=adj_dc13 mg
+let c13_mg = adj_dc13[g=mg@ave,d=dc13_vs10a_v2]
+go set_ocean c13_mg mskhr[d=($dataset)]
+
+let p = c13_mg[l=1]
+let q = c13m[k=1]
+let perr = error_mg
+go regressxy
+go set_ocean pmasked mskhr[d=($dataset)]
+go set_ocean qmasked mskhr[d=($dataset)]

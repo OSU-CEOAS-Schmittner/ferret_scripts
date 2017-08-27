@@ -1,0 +1,26 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let kappa = ln(2)/5730
+let r14 = O_DC14/1000+1
+let age = (-1)*ln(r14)/kappa
+
+let agem = age[d=($dataset),($tim)]
+go set_ocean agem
+
+use "/home/aschmitt/data/c14/skinner16/dc14age_LGM_UVicgrid.nc"
+!set axis/modulo xax5
+set axis/depth depth
+!set axis/modulo xt
+define grid/like=age[d=($dataset)]/t=LGM_dc14age mg
+let age_mg = LGM_dc14age[g=mg@ave,d=dc14age_LGM_UVicgrid]
+go set_ocean age_mg g_mskhr[d=($dataset)]
+
+let p = age_mg
+! extrapolate two grid points by filling missing values
+let agemex1 = agem[x=@fav,y=@fav,z=@fav]
+let q = agemex1[x=@fav,y=@fav,z=@fav]
+let perr = error_mg
+go regressxyz
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]

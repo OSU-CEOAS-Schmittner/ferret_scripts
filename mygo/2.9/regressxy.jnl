@@ -1,0 +1,58 @@
+\CANCEL MODE VERIFY 
+! Description:  define FERRET variables for regression along the X axis
+! updated 10/93 for Ferret V3.01
+
+say ... Linear Regression Along the X Axis and Y Axis
+say ... Instructions:
+say Use the LET command to define new variables
+say Define the variable P as your independent (X) variable
+say Define the variable Q as your   dependent (Y) variable
+say Results will be variables "SLOPE", "INTERCEP" and "RSQUARE"
+say QHAT will be the regression estimate
+say Note: If "X" is your independent variable then
+say ...   "SET GRID Q" after defining Q.
+say ... 
+
+let pq = p*q
+let pqmask = pq-pq  ! 0 or "missing" so all variables share the same missing
+let pmasked = p + pqmask
+let qmasked = q + pqmask
+let pp = pmasked*pmasked
+let qq = qmasked*qmasked
+
+let pave = pmasked[x=@ave,y=@ave]
+let qave = qmasked[x=@ave,y=@ave]
+let pqave = pq[x=@ave,y=@ave]
+let ppave = pp[x=@ave,y=@ave]
+let qqave = qq[x=@ave,y=@ave]
+let pvar  = ppave - pave*pave
+let qvar  = qqave - qave*qave
+let pqvar = pqave - pave*qave
+
+let slope = pqvar / pvar
+let intercep = qave - slope*pave
+let qhat = slope*p + intercep
+let rsquare = (pqvar*pqvar) / (pvar*qvar)
+let qstd = qvar^0.5
+let pstd = pvar^0.5
+let r = pqvar / (pstd*qstd)
+set variable/title='correlation' r
+! difference normalized by p standard deviation
+let p_min_pave = (pmasked - pave)/pstd
+let q_min_pave = (qmasked - qave)/pstd
+let q_min_p_sq = (q_min_pave - p_min_pave)^2
+let rms_prime = q_min_p_sq[x=@ave,y=@ave]^0.5
+set variable/title='pattern RMS error' rms_prime
+let q_min_p_sq2 = (qmasked - pmasked)^2
+let rms = (q_min_p_sq2[x=@ave,y=@ave]^0.5)/pstd
+set variable/title='RMS error' rms
+let stdr = qstd/pstd
+set variable/title='ration of standard deviations' stdr
+SET MODE/LAST VERIFY
+let xx = qstd/pstd*r
+set variable/title='x-coordinate in Taylor plot' xx
+let alpha = acos(r)
+let yy = qstd/pstd*sin(alpha)
+set variable/title='y-coordinate in Taylor plot' yy
+list r,stdr,rms_prime,rms,xx,yy
+

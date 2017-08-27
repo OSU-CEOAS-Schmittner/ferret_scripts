@@ -1,0 +1,49 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+!set window 1
+
+go taylor_frame 1.5
+go taylor_agraticule.jnl 1.5 /line=1 85 95 5
+go taylor_agraticule.jnl 1.5 /line=1 98 98 5
+go taylor_rgraticule.jnl 0.6 /line=1 1.2 0.2
+go taylor_rms 1.5 0.2 0.6 0.2 /size=.1
+
+go calc_taylor_c14 ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=white
+go taylor_label stdr r "C14"
+
+go calc_taylor_po4 ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=red
+go taylor_label stdr r "PO_4"
+
+go calc_taylor_no3 ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=green
+go taylor_label stdr r "NO_3"
+
+go calc_taylor_aou ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=blue
+go taylor_label stdr r "AOU"
+
+go calc_taylor_temp ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=orange
+go taylor_label stdr r "T"
+
+go calc_taylor_salt ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=yellow
+go taylor_label stdr r "S"
+
+go calc_taylor_dic ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=magenta
+go taylor_label stdr r "DIC"
+
+go calc_taylor_alk ($dataset) ($tim)
+go taylor_polymark stdr r /line/fill/pal=brown
+go taylor_label stdr r "ALK"
+
+
+
+
+
+
+

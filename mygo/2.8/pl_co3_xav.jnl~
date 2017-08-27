@@ -1,0 +1,89 @@
+! compares simulated DIC with observations zonally averaged in each basin
+
+def symbol tim = $2%l=@ave%
+go portraitNxN 2 4 17.5 40
+use "/raid1/aschmitt/data/glodap/TCO2.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dic[d=1]/t=tco2 mg
+let dic_mg = tco2[g=mg]
+go set_ocean dic_mg mskhr[d=1]
+
+pal inverse_greyscale
+pal inverse_bluescale
+pal my_rgb
+def sym opt=lev=(1900,2420,40)/vlim=0:5100
+
+set view 1
+ppl AXLSZE 0.0 0.16
+ppl SHAKEY 1, 1, 0.15, 1, 4, 8, 9.4, 10.2, 1.4, 7.4
+fill/nolab/nokey/($opt) dic_mg[x=@ave]
+con/ov/nolab/set/nokey/($opt) dic_mg[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "DIC (umol/kg) Observations"
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Global"
+
+set view 3
+fill/nolab/nokey/($opt) dic_mg_a[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic_mg_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Atlantic"
+
+set view 5
+fill/nolab/nokey/($opt) dic_mg_p[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic_mg_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Pacific"
+
+set view 7
+ppl AXLSZE 0.16 0.16
+fill/nolab/nokey/($opt) dic_mg_i[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic_mg_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Indian"
+
+use $1%1%
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9 ! ocean mean salinity
+let dic2 = dic[($tim)]*salinity[($tim)]/sbar ! normalize with salinity to get insitu concentration
+let/title="Total Carbon Dioxide"/units="umol/kg" dic1 = dic2/rho*1e6 !convert from mol/m^3 to umol/kg
+go set_ocean dic1 
+set axis/depth zt
+
+set view 2
+ppl AXLSZE 0.0 0.0
+fill/nolab/($opt) dic1[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic1[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Model"
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Global"
+
+set view 4
+fill/nolab/($opt) dic1_a[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic1_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Atlantic"
+
+set view 6
+fill/nolab/($opt) dic1_p[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic1_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Pacific"
+
+set view 8
+ppl AXLSZE 0.16 0.0
+fill/nolab/($opt) dic1_i[x=@ave]
+con/set/ov/nolab/nokey/($opt) dic1_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Indian"
+
+
+

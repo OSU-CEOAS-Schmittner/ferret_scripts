@@ -1,0 +1,26 @@
+let redctn = 106/16 ! C:N redfield ratio
+let dz2 = 80 ! depth of second model layer
+let fac = redctn*12*3600*24*365*1E-9*1E-6 ! converts [mol N/s] to [Gt C/yr]
+let/title="Export Production"/units="GtC/yr" exp = o_detrexp[x=@din,y=@din,K=2]*fac*dz2
+let/title="Primary Production"/units="GtC/yr" pp = tonpp[x=@din,y=@din,z=@din]*fac ! NPP
+let tonpp = phytnpp+diaznpp ! total ocean NPP = other + diazotrophs
+let np1=tonpp-o_phytrecy-O_excrt-o_detrremi ! new production
+let/title="New Production"/units="GtC/yr" np=np1[x=@din,y=@din,k=1:2@din]*fac
+list exp,np,pp
+stop
+let gamma1 = 0.925
+!let gamma1 = 0.75
+list npp[x=@din,y=@din,z=@din,l=@ave]*1e-15
+list expo[x=@din,y=@din,k=2,l=@ave]*75*1e-15
+list remi[x=@din,y=@din,z=@din,l=@ave]*1e-15
+list excr[x=@din,y=@din,z=@din,l=@ave]*1e-15
+list graz[x=@din,y=@din,z=@din,l=@ave]*gamma1*1e-15
+list graz[x=@din,y=@din,z=@din,l=@ave]*(1.-gamma1)*1e-15
+!list morpt[x=@din,y=@din,z=@din,l=@ave]*1e-15
+list morp[x=@din,y=@din,z=@din,l=@ave]*1e-15
+list morz[x=@din,y=@din,z=@din,l=@ave]*1e-15
+let fac2 = 1e-3*14*1e-6*1e-9
+list phyt[x=@din,y=@din,z=@din,l=@ave]*fac2
+list zoop[x=@din,y=@din,z=@din,l=@ave]*fac2
+list/for=(f6.2) nutr[x=@din,y=@din,z=@din,l=@ave]*fac2
+list detr[x=@din,y=@din,z=@din,l=@ave]*fac2

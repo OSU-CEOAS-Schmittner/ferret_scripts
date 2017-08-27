@@ -1,0 +1,30 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+! convert from mol N / m^3 to ug/kg
+let pocm0 = detr+phyt+diaz+zoop
+let pocm = pocm0[d=($dataset),($tim)]*7*12*1e6/1000
+let pocmlt530 = phyt+diaz+zoop*0.25
+!let pocmlt530 = phyt+diaz
+let poclt53m = pocmlt530[d=($dataset),($tim)]*7*12*1e6/1000
+let pocmgt530 = detr+zoop*0.25
+let pocgt53m = pocmgt530[d=($dataset),($tim)]*7*12*1e6/1000
+
+go set_ocean pocm
+go set_ocean poclt53m
+go set_ocean pocgt53m
+
+use "/home/aschmitt/data/lam10gbc/lam10gbc.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=detr[d=($dataset)]/t=poclt53 mg
+let poclt53_mg = poclt53[g=mg@ave,d=lam10gbc]
+let pocgt53_mg = pocgt53[g=mg@ave,d=lam10gbc]
+let poc_mg = pocgt53_mg + poclt53_mg
+go set_ocean poclt53_mg mskhr[d=($dataset)]
+go set_ocean pocgt53_mg mskhr[d=($dataset)]
+go set_ocean poc_mg mskhr[d=($dataset)]
+
+use ($dataset)
+let p = poc_mg
+let q = pocm
+go regressxyz

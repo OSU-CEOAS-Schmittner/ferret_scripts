@@ -1,0 +1,23 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let nutrm = nitrate[d=($dataset),($tim)]*1000
+go set_ocean nutrm
+
+use "/home/aschmitt/data/woa01/no3_mean.nc"
+!use no3_mean
+set axis/depth zt
+set axis/modulo xt
+define grid/like=nutrm/t=N00AN1 mg
+let no3_mg = N00AN1[g=mg,l=1,d=no3_mean]
+go set_ocean no3_mg mskhr[d=1]
+!let no3_mg_a = no3_mg[y=40s:90n,d=no3_mean]*nutrm_a[y=40s:90n,d=1]/nutrm_a[y=40s:90n,d=1]
+!let no3_mg_p = no3_mg[y=40s:90n,d=no3_mean]*nutrm_p[y=40s:90n,d=1]/nutrm_p[y=40s:90n,d=1]
+!let no3_mg_i = no3_mg[y=40s:90n,d=no3_mean]*nutrm_i[y=40s:90n,d=1]/nutrm_i[y=40s:90n,d=1]
+!let no3_mg_s = no3_mg[d=no3_mean,y=90s:40s]
+
+use ($dataset)
+let p = no3_mg[d=no3_mean]
+let q = nutrm
+go regressxyz
+list/nohead pave,qave

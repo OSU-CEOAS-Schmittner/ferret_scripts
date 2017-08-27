@@ -1,0 +1,44 @@
+!***********************************************************************
+! Description: plots vertical velocity in FOAM at 1000 m
+!
+! arguments  : $1 : specifications e.g. "l=1:12@ave,z=-1000" or "l=2"
+! use        : go pl_w "l=1:120@ave,z=-1000" QUOTES NEEDED
+!
+!***********************************************************************
+
+go portrait
+define view/xlim=0.01:0.99/ylim=0.49:1 upper
+define view/xlim=0.01:0.99/ylim=0:0.51 lower
+set reg/x=60:400
+define symbol tav = $1%l=1,z=-1000%
+
+set view upper
+let year = 3600*24*365
+let/title="Vertical velocity"/units="km/yr" w_km_per_year w[($tav)]*year*1e-3
+shade/nolabels/set/lev=(-4.25,4.25,0.5)/pal=light_centered w_km_per_year
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.2
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shakey 1 0 0.2 3 3 9 
+ppl shade
+shade/nolabels/nokey/lev=(-105,-96,1)/ov/pal=grayscale/pat=default missing(w_km_per_year,-99)
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.3` 0,0,0.2 "Vertical velocity at 1000 m depth (km/yr)"
+
+set view lower
+let conv = convec[($tav)]
+shade/nolabels/set/lev=(0,1500,200)/pal=inverse_grayscale conv
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.2
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shakey 1 0 0.2 3 3 9 
+ppl shade
+shade/nolabels/nokey/lev=(-105,-96,1)/ov/pal=grayscale/pat=default missing(conv,-99)
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.3` 0,0,0.2 "Upper ocean convection frequency (counts)"
+
+

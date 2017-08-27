@@ -1,0 +1,49 @@
+!***********************************************************************
+! Description: plots zonally averaged sea surface temperature
+! UVic/PUMA versus WOA05
+!
+! use: go pl_sst_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(-2,34,2)
+!go portraitNxN 2 2 95 14
+go portraitNxN 2 3 95 30
+!set win/asp=0.9
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal default
+
+use "/home/aschmitt/data/woa05/t00an1.nc"
+def grid/like=temperature[d=($dataset)]/t=t00an1 mg
+let tobs1 = t00an1[g=mg@ave,d=t00an1.nc]
+let tobs = tobs1[k=1]
+let tmod = temperature[($2),d=($dataset),k=1]-273.15
+
+set view 1
+pl/set/nol/li/vlim=-2:30 tobs[x=@ave]
+ppl plot 
+pl/nol/o/li tmod[x=@ave]
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.08` 1,0,0.2 SST
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.9` 1,0,0.2 @p2($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 WOA05
+
+set view 3
+pl/set/nol/li/vlim=-7:7 tmod[x=@ave,L=1]-tobs[x=@ave]
+ppl xlab "Latitude"
+ppl plot 
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 DIFFERENCE (M-O)
+pl/nol/o/li/dash/col=black tmod[x=@ave]*0
+
+

@@ -1,0 +1,16 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let nutrm = no3[d=($dataset),($tim)]
+go set_ocean nutrm
+
+use "/raid1/aschmitt/data/woa01/no3_mean.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=nutr[d=1]/t=N00AN1 mg
+let no3_mg = N00AN1[g=mg,l=1,d=no3_mean]
+go set_ocean no3_mg mskhr[d=($dataset)]
+
+let p = no3_mg[d=no3_mean]
+let q = nutrm
+go regressxyz

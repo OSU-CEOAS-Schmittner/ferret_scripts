@@ -1,0 +1,38 @@
+!**************************************************************************
+! Description: Calculates global taylor statistical meausures of model 
+!              DON vs. observations
+!
+! example:
+! yes? go calc_taylor_don 1 l=1 phosphate_annual_1degree.nc
+!
+! arguments  : $1 : model output e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : path of data file
+!
+! author(s): Christopher Somes (csomes@ifm-geomar.de)
+!            Andreas Schmittner (aschmitt@coas.oregonstate.edu)
+!*************************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def symbol dondata = $3%/home/aschmitt/data/DOM/DON_letscher/don_global_1x1_i1.nc%
+
+let donm = O_don[d=($dataset),($tim)]*1000
+
+use "($dondata)"
+set axis/depth depth
+set axis/modulo longitude
+let donobs = don[d=($dondata),l=1:12@ave]
+
+define grid/like=donm/t=donobs mg
+let don_mg = donobs[g=mg@ave]
+
+! assume semi-recalictrant pool
+let don_refrac = 1.
+let donobs_sr = max(don_mg-don_refrac, 0.)
+
+let p = donobs_sr
+let q = donm
+go regressxyz
+go set_ocean pmasked
+go set_ocean qmasked

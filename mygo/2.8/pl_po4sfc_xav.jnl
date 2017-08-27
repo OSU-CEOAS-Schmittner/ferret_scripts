@@ -1,0 +1,13 @@
+use "/home/aschmitt/data/woa01/po4.cdf"
+pl/set/nolab/sym=20/ylim=0:2.5/size=.2 PHOSPHATE[z=0:50@ave,x=@ave,j=1:180:3]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl ylab Surface 0-50m PO_4 (uM)
+ppl yfor (f3.1)
+ppl plot
+
+use 1
+pl/nolab/o/li/col=red/thick=3 nutr[k=1,x=@ave]
+
+pl/o/nolab/vs/sym=20/size=.2 {-10,0,10},{30,30,30}; label -40 30  -1,0,0.2 "WOA01"
+pl/o/nolab/vs/li/col=red/thick=3 {-10,10},{27,27}; label -40 27  -1,0,0.2 "MODEL"

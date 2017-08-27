@@ -1,0 +1,44 @@
+!***********************************************************************
+! Description: plots ALK horizontal averages for Model vs. 
+! observations
+!
+! use: go pl_alk_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_alk ($dataset) ($tim)
+
+use ($dataset)
+
+def sym opt=hlim=2260:2420:20
+def sym labx1=2270
+def sym labxd=20
+def sym laby1=2000
+def sym laby2=3000
+
+go pl_var_xyav
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 "ALK (mmol/m^3)"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

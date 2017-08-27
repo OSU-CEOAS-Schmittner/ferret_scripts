@@ -1,0 +1,74 @@
+!***********************************************************************
+! Description: plots monthly surface specific humidity climotology
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_sshum 1 l=7:9@ave t=01-jan-0610:01-jan-0620 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=12:14@ave or l=2
+!            : $3 : model time averaging period e.g. t=01-jan-0610:01-jan-0620
+!            : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(0,20,2)(inf)
+def sym lev2 = lev=(-inf)(-6,6,1)(inf)
+go portraitNxN 2 2 5 20
+set win/asp=0.8
+set reg/x=180:540
+!set axis/modulo xt
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal default
+
+use climatological_axes
+ca da climatological_axes
+
+use "/home/aschmitt/data/ncep/pressure/shum.mon.ltm.nc"
+let obs0 = shum[d=shum.mon.ltm.nc]
+
+let mod0 = q[d=($dataset)]*1000
+
+def grid/like=q[d=($dataset)]/t=shum mg
+let obs1 = obs0[g=mg,($otim)]
+let obs = obs1[z=1000]
+let mod1 = mod0[($mtim)]
+let mod2 = mod1[gt=month_reg@mod]
+let mod = mod2[($otim),z=1000]
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl axlsze 0,0.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) obs
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Air Specific Humidity (g/kg)"
+label/nouser `($ppl$xlen)*0.99` `($ppl$ylen)*1.02` 1,0,0.2 "NCEP"
+
+set view 2
+shade/set/nolab/($lev)/nokey mod
+ppl axlsze 0.14,0
+ppl shade
+fill/nolab/o/($lev) mod
+go land
+label/nouser `($ppl$xlen)*0.99` `($ppl$ylen)*1.02` 1,0,0.2 ($model)
+
+set view 3
+let delta = mod - obs
+shade/set/nolab/($lev2)/pal=light_centered delta
+ppl shakey 1,1,0.16
+ppl axlsze 0.14,0.14
+ppl shade
+fill/nolab/o/($lev2)/pal=light_centered delta
+go land
+label/nouser `($ppl$xlen)*0.99` `($ppl$ylen)*1.02` 1,0,0.2 MODEL-NCEP
+
+set view 4
+pl/nolab/axes=1,1,0,1 obs[x=@ave], mod[x=@ave]
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.95` 1,0,0.15 OBS
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.9` 1,0,0.15 @p2MODEL

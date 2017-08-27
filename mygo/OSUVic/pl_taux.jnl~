@@ -1,0 +1,63 @@
+!***********************************************************************
+! Description: plots zonal wind stress
+! UVic versus NCEP
+!
+! use: go pl_taux 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(-.2,.25,.02)
+!go portraitNxN 2 2 95 14
+go portraitNxN 2 2 10 19
+set win/asp=0.9
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal centered
+
+use "UVic.coupled/data/wind_stress_mth.nc"
+let tx1  = if (taux ne 0.) then taux
+let txo = tx1[l=1:12@ave]
+let txm = tx1[($tim),d=($dataset)]
+
+set view 1
+shade/set/nolab/($lev) txo
+ppl shakey 1,0,0.16,4
+ppl shade
+fill/nolab/o/($lev) txo
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.05` 0,0,0.2 @SGt@SR_x
+label/nouser `($ppl$xlen)*0.1` `($ppl$ylen)*0.8` -1,0,0.2 "NCEP"
+
+
+set view 3
+
+shade/set/nolab/($lev) txm
+ppl shakey 0,1,0.16
+ppl shade
+fill/nolab/o/($lev) txm
+label/nouser `($ppl$xlen)*0.1` `($ppl$ylen)*0.8` -1,0,0.2 ($model)
+
+set view 2
+
+shade/set/nolab/lev=(-inf)(-0.1,0.1,0.02)(inf)/pal=light_centered txm-txo
+ppl shakey 1,0,0.16, 2
+ppl shade
+fill/nolab/o/($lev) txm
+label/nouser `($ppl$xlen)*0.1` `($ppl$ylen)*0.8` -1,0,0.2 "Difference"
+
+set view 4
+pl/set/nol/li/vlim=-.1:.2 txo[x=@ave]
+ppl plot 
+pl/nol/o/li txm[x=@ave]
+!label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.08` 1,0,0.2 @SGt@SR_x
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.9` 1,0,0.2 @p2($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 NCEP

@@ -1,0 +1,19 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+let RHO = 1024.5 ! value used in co2calc.f
+let dfe2 = o_dfe[($tim),d=($dataset)]
+let/title="Dissolved Iron"/units="nmol/kg" dfe1 = dfe2/rho*1e9 ! convert from mol/m^3 to nmol/kg
+
+use "/home/aschmitt/data/iron/dfe_uvgr.nc"
+set axis/depth depth
+set axis/modulo longitude
+define grid/like=o_dfe[d=($dataset)]/t=dfe mg
+let dfe_mg = dfe[g=mg,d=dfe_uvgr]
+go set_ocean dfe_mg mskhr[d=($dataset)]
+
+use ($dataset)
+let p = dfe_mg
+let q = dfe1
+go regressxyz
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]

@@ -1,0 +1,37 @@
+!***********************************************************************
+! Description: plots surface air temperature
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_sat 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(-50,40,5)
+!go portraitNxN 2 2 95 14
+!go portraitNxN 2 3 95 30
+!set win/asp=0.9
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal default
+
+use "/home/aschmitt/data/ncep/ncep.mean.nc"
+
+!set view full
+pl/set/nol/li/vlim=-50:30 t2[x=@ave]
+ppl xlab "Latitude"
+ppl plot 
+!pl/nol/o/li t2m[x=@ave,d=($dataset),($tim)]-273.15	! PUMA
+pl/nol/o/li sat[x=@ave,d=($dataset),($tim)]-273.15	! UVic
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.9` 1,0,0.2 @p2($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 NCEP

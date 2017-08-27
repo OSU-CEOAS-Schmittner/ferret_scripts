@@ -1,0 +1,47 @@
+!***********************************************************************
+! Description: plots delta n15 profiles for Model vs. 
+! observations
+!
+! use: go pl_n15_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_n15 ($dataset) ($tim)
+
+def sym opt=hlim=2:15:1
+def sym labx1=10
+def sym labxd=1
+def sym laby1=3500
+def sym laby2=4500
+
+def sym varname = "@SGd@SR^1^5N_N_O_3 (permil)"
+define symbol lev = lev=(-inf)(-5,20,1)(inf)
+define symbol levc = lev=(-5,20,2)(inf)
+pal orange_blue
+
+go pl_var_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,12 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+use "/raid1/aschmitt/data/ncep/ncep.mean.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=sat[d=($dataset)]/t=t2 mg
+let sat_mg = t2[g=mg,d=ncep.mean.nc]
+
+let p = sat_mg
+let q = tc
+go regressxy

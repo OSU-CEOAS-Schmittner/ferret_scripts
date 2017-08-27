@@ -1,0 +1,24 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+let RHO = RHO_UN(SALINITY,TEMP-273.15,0*TEMP/TEMP)
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9
+let alk2 = alk*salinity/sbar ! normalize by salinity
+let/title="Alkalinity"/units="umol/kg" alk1 = alk2[($tim),d=($dataset)]/rho*1e6 ! convert from mol/m^3 to umol/kg
+go set_ocean alk1
+
+use "/raid1/aschmitt/data/glodap/ALK.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=alk[d=($dataset)]/t=talk mg
+let alk_mg = talk[g=mg,d=ALK]
+go set_ocean alk_mg mskhr[d=($dataset)]
+let error_mg = talk_err[g=mg,d=ALK]
+let dpe_mg = alk_mg + error_mg
+let dme_mg = alk_mg - error_mg
+go set_ocean dpe_mg mskhr[d=($dataset)]
+go set_ocean dme_mg mskhr[d=($dataset)]
+
+let p = alk_mg[d=ALK]
+let q = alk1
+go regressxyz

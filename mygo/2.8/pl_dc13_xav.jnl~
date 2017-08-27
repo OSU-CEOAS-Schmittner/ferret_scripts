@@ -1,0 +1,40 @@
+!***********************************************************************
+! Description: plots delta c13 sections for Model vs. 
+! observations
+!
+! use: go pl_c13_sec 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_c13 ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "@SGd@SR^1^3DIC (permil)"
+define symbol lev = (-inf)(-2,2,.2)(inf)
+define symbol lev2 = (-inf)(-1,1,.1)(inf)
+
+go pl_dvar_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

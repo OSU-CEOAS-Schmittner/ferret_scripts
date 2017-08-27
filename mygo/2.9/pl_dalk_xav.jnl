@@ -1,0 +1,43 @@
+!***********************************************************************
+! Description: plots ALK zonal averages for Model vs. 
+! observations
+!
+! use: go pl_dic_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_alk ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "Alkalinity (mmol/m^3)"
+define symbol lev = lev=(-inf)(2100,2450,25)(inf)
+define symbol levc = lev=(2000,2550,50)(inf)
+define symbol levd = lev=(-inf)(-50,50,10)(inf)
+define symbol levdc = lev=(-inf)(-180,180,20)(inf)
+pal blue_orange
+
+go pl_dvar_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

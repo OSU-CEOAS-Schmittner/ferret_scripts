@@ -1,0 +1,38 @@
+!**************************************************************************
+! Description: Calculates global taylor statistical meausures of model 
+!              DOP vs. observations
+!
+! example:
+! yes? go calc_taylor_po4 1 l=1 phosphate_annual_1degree.nc
+!
+! arguments  : $1 : model output e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : path of data file
+!
+! author(s): Christopher Somes (csomes@ifm-geomar.de)
+!            Andreas Schmittner (aschmitt@coas.oregonstate.edu)
+!*************************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def symbol dopdata = $3%/home/aschmitt/data/DOM/DOP_wolff/dop_atlantic_1x1_i1.nc%
+
+let dopm = O_dop[d=($dataset),($tim)]*1000000
+
+use "($dopdata)"
+set axis/depth depth
+set axis/modulo longitude
+let dopobs = dop[d=($dopdata),l=1:12@ave]
+
+define grid/like=dopm/t=dopobs mg
+let dopobs_mg = dopobs[g=mg@ave]
+
+!calculate assumed semi-refractory pool
+let dop_refrac = 0.
+let dopobs_sr = max(dopobs_mg-dop_refrac, 0.)
+
+let p = dopobs_sr[k=1]
+let q = dopm[k=1]
+go regressxy
+go set_ocean pmasked
+go set_ocean qmasked

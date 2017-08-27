@@ -1,0 +1,74 @@
+!***********************************************************************
+! Description: plots salinity difference between FOAM and Levitus
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $2 : data set e.g. 1 or model.output.nc
+!
+!***********************************************************************
+
+!define symbol tav = $1%l=1%
+define symbol hlimits = /hlimits=-0.25:0.25:0.05
+use levitus_climatology
+go portraitNxN 2 4 0 25
+use 1
+define grid/like=salt[d=levitus_climatology] lg
+let dsalt = salt[g=lg]-salt[d=levitus_climatology]
+go set_drain2 dsalt
+set view 1
+plot($hlimits)/nolabels/set dsalt[x=@ave,y=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl labset, 0.2, 0.2, 0.2, 0.12
+ppl plot
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.27` 0,0,0.2 "SALTINITY LEVITUS - MODEL"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "WORLD OCEAN"
+
+! ATLANTIC
+
+set view 3
+plot($hlimits)/nolabels/set dsalt_a[x=@ave,y=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl labset, 0.2, 0.2, 0.2, 0.12
+ppl plot
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "ATLANTIC"
+
+! PACIFIC
+
+set view 5
+plot($hlimits)/nolabels/set dsalt_p[x=@ave,y=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl labset, 0.2, 0.2, 0.2, 0.12
+ppl plot
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "PACIFIC"
+
+! INDIAN
+
+set view 7
+plot($hlimits)/nolabels/set dsalt_i[x=@ave,y=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl labset, 0.2, 0.2, 0.2, 0.12
+ppl plot
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "INDIAN OCEAN"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

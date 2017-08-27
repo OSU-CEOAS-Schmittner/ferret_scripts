@@ -1,0 +1,181 @@
+se mo me
+go pl_toa_xav 1 ($modeltime)@ave ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > toa_xav_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_cc_m 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > cc_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_alb_p 1 ($modeltime)@ave ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > alb_p_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_alb_s_m 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > alb_s_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_sst 2 ($modeltime)@ave ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > sst_($modeltime).ps
+list sst[x=@ave,y=@ave]+273.15
+pause
+
+se mo me
+go pl_sat_m 2 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > sat_($modeltime).ps
+list mod[x=@ave,y=@ave]
+
+se mo me
+go pl_sat_m 2 l=12:14@ave ($modeltime) ($modelname)DJF
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > satDJF_($modeltime).ps
+list mod[x=@ave,y=60:90@ave]
+pause
+
+se mo me
+go pl_sat_m 2 l=6:8@ave ($modeltime) ($modelname)JJA
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > satJJA_($modeltime).ps
+pause
+
+se mo me
+go pl_sshum_m 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > sshum_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_precip_m 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > precip_($modeltime).ps
+list obs[x=@ave,y=@ave]
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_precip_m 1 l=12:14@ave ($modeltime) ($modelname)DJF
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > precipDJF_($modeltime).ps
+pause
+
+se mo me
+go pl_precip_m 1 l=6:8@ave ($modeltime) ($modelname)JJA
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > precipJJA_($modeltime).ps
+pause
+
+se mo me
+go pl_evap_m 2 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > evap_($modeltime).ps
+list obs[x=@ave,y=@ave]
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_strd_m 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > strd_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_str_m 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > str_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_ssw_m 2 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > ssw_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_sshf_m 2 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > sshf_($modeltime).ps
+list mod[x=@ave,y=@ave]
+pause
+
+se mo me
+go pl_psi 1 l=12:14@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > psiDJF_($modeltime).ps
+pause
+
+se mo me
+go pl_psi 1 l=6:8@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > psiJJA_($modeltime).ps
+pause
+
+se mo me
+go pl_at_xav 1 l=1:12@ave ($modeltime) ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > at_xav_($modeltime).ps
+pause
+
+se mo me
+go pl_shum_xav 1 l=1:12@ave ($modeltime)@ave ($modelname)
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > shum_xav_($modeltime).ps
+pause
+
+se mo me
+go calc_xi_2.8 ($modeltime)@ave
+set axis/depth zt
+ca reg
+go pl_xi 2 l=1
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > xi_($modeltime).ps
+pause
+
+se mo me
+go pl_taux 2 ($modeltime)@ave
+ca mo me
+sp Fprint -o tmp.ps -l cps -p portrait metafile.plt
+sp ps_thicken tmp.ps 4 > taux_($modeltime).ps
+pause
+
+sp rm tmp.ps
+

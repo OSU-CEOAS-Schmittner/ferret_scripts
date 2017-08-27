@@ -1,0 +1,14 @@
+!
+! Description: printing current color window into file $1 or ferret.ps
+!              ChA, Dec '96 
+!------------------------------------------------------------------
+!
+! usage: go ps filename
+!
+define symbole file = $1%ferret.ps%
+! 
+
+PPL CLSPLT
+spawn gksm2ps -l cps metafile.plt
+spawn mv gksm2ps_output.ps ($file)
+!

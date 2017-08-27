@@ -1,0 +1,137 @@
+!***********************************************************************
+! Description: plots salinity sections for Model vs. Levitus observations
+!
+! use: go pl_salt_sec 1 l=1:12 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+
+def sym tav = $2
+def sym model = $3%MODEL%
+use lev_annual
+set axis/depth zt
+set axis/modulo xt
+
+go portraitNxN 2 3 15 20
+use $1%1%
+
+! ATLANTIC
+ppl shaset reset
+set reg/x=25w/y=80s:80n/z=0:5400
+set view 1
+define symbol lev = (32)(33,34,0.2)(34,35,0.1)(35,36,0.2)(37)
+shade/nolabels/set/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl labset, 0.0, 0.0, 0, 0.2
+ppl shade
+fill/ov/nolabels/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+con/set/ov/nolabels/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salinity[($tav)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 ($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC 25 W"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*1.27` 0,0,0.2 "SALINITY"
+
+set view 2
+ppl shaset reset
+shade/nolabels/set/pal=saz2/lev=($lev) salt[d=lev_annual,($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl conset .2 4 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/pal=saz2/lev=($lev)/nokey salt[d=lev_annual,($tav)]
+con/set/ov/nolabels/pal=saz2/lev=($lev)/nokey salt[d=lev_annual,($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt[d=lev_annual,($tav)],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "LEVITUS"
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC 25 W"
+
+! PACIFIC
+ppl shaset reset
+set view 3
+set reg/x=150w/y=-80:65
+shade/nolabels/set/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+con/set/ov/nolabels/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salinity[($tav)],-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC 150 W"
+
+set view 4
+shade/nolabels/set/pal=saz2/lev=($lev) salt[d=lev_annual,($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/pal=saz2/lev=($lev)/nokey salt[d=lev_annual,($tav)]
+con/set/ov/nolabels/pal=saz2/lev=($lev)/nokey salt[d=lev_annual,($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt[d=lev_annual,($tav)],0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC 150 W"
+
+
+ppl shaset reset
+! INDIAN
+set view 5
+SET REG/X=65E/y=-70:30
+shade/nolabels/set/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+con/set/ov/nolabels/pal=saz2/lev=($lev)/nokey salinity[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salinity[($tav)],-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN 65 E"
+
+set view 6
+shade/nolabels/set/pal=saz2/lev=($lev)/z=5500:0 salt[d=lev_annual,($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/pal=saz2/lev=($lev)/nokey salt[d=lev_annual,($tav)]
+con/set/ov/nolabels/pal=saz2/lev=($lev)/nokey salt[d=lev_annual,($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt[d=lev_annual,($tav)],0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN 65 E"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

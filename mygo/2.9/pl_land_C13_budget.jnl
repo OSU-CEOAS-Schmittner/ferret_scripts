@@ -1,0 +1,7 @@
+let kgtoPg = 1e-12
+let/units="PgC/s"/title="C13 Flux" lcflx13 =  (L_SOILRESP13 - L_VEGNPP13 + L_VEGBURN13)*(-1)*kgtoPg
+let/units="PgC"/title="Integrated C13 Flux" lcflxin13 = lcflx13[t=@iin]
+let/units="PgC"/title="Land C13" lcarb13 = (l_soilcarb13+l_vegcarb13)*kgtoPg
+let/units="PgC"/title="Land C13 Change" dlcarb13 = lcarb13 - lcarb13[l=1]
+
+pl lcflxin13, dlcarb13

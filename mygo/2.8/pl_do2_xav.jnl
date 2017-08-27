@@ -1,0 +1,39 @@
+!***********************************************************************
+! Description: plots delta alk sections for Model vs. 
+! observations
+!
+! use: go pl_ddic_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_o2 ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "O_2 mmol/m^3"
+define symbol lev = (0,400,20)
+define symbol lev2 = (-inf)(-100,100,10)(inf)
+
+go pl_dvar_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+

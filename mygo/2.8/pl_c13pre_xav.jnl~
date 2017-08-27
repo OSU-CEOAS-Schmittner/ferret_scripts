@@ -1,0 +1,251 @@
+!***********************************************************************
+! Description: plots delta c13 sections for Model vs. 
+! observations
+!
+! use: go pl_c13_sec 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+use tavg.01810.01.01.nc
+
+def symbol dataset = 1
+def symbol tim = l=1
+def sym model = MODEL
+
+go calc_taylor_c13pref ($dataset) ($tim)
+
+go portraitNxN 4 3 35 42
+set win/asp=0.7
+use ($dataset)
+
+let c13rem = 1.59-0.0071*aoum
+let c13pref = c13m - c13rem
+
+let c13remobs = 1.53-0.0070*aou_mg
+let c13prefobs = c13_mg - c13remobs
+!let c13remobs = 1.43-0.0066*aou_mg ! this is what the data give for all depths
+!let c13prefobs = c13_mg - c13remobs
+
+let p = c13prefobs
+let q = c13pref
+let delta = qmasked-pmasked
+go regressxyz
+go set_ocean pmasked mskhr[d=($dataset)]
+go set_ocean qmasked mskhr[d=($dataset)]
+go set_ocean delta mskhr[d=($dataset)]
+go set_ocean q mskhr[d=($dataset)]
+
+pal light_centered
+! ATLANTIC
+ppl shaset reset
+set view 1
+define symbol lev = (-inf)(-1)(-.5,.5,.1)(1)(inf)
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,1,1 q_a[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0. 0.16
+ppl labset, 0.0, 0.0, 0, 0.16
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey q_a[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey q_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(qmasked_a[x=@ave],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 Model 1810s
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC"
+!label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*1.27` 0,0,0.2 "@SGd@SR^1^3C (permil)"
+
+! PACIFIC
+ppl shaset reset
+set view 5
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,1,1 q_p[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0. 0.16
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey q_p[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey q_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(c14m,-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC"
+
+ppl shaset reset
+! INDIAN
+set view 9
+shade/nolabels/set/lev=($lev)/nokey q_i[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.16 0.16
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey q_i[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey q_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(c14m,-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN"
+
+go calc_taylor_c13pref ($dataset) l=20
+
+set view 2
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,0,1 q_a[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0. 0.
+ppl labset, 0.0, 0.0, 0, 0.2
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey q_a[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey q_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(qmasked_a[x=@ave],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 Model 1990s
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*1.27` 0,0,0.2 "@SGd@SR^1^3C_p_r_e (permil)"
+
+! PACIFIC
+ppl shaset reset
+set view 6
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,0,1 q_p[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0. 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey q_p[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey q_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC"
+
+ppl shaset reset
+! INDIAN
+set view 10
+shade/nolabels/set/lev=($lev)/nokey/axes=1,1,0,1 q_i[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.16 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey q_i[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey q_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN"
+
+
+set view 3
+ppl shaset reset
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,0,1/hlim=-75:85 pmasked_a[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.
+!ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl conset .2 4 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey pmasked_a[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey pmasked_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "Obs 1990-2005"
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC"
+
+set view 7
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,0,1/hlim=-75:85 pmasked_p[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+!ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey pmasked_p[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey pmasked_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC"
+
+set view 11
+shade/nolabels/set/lev=($lev)/z=5500:0/axes=1,1,0,1/hlim=-75:85 pmasked_i[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0.16 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.16, 2, 5, , `($ppl$xlen)*0.99`,`($ppl$xlen)*1.1`, `($ppl$ylen)*0.5`,`($ppl$ylen)*1.46`
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey pmasked_i[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey pmasked_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+
+set view 4
+ppl shaset reset
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,0,1/hlim=-75:85 delta_a[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.
+!ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl conset .2 4 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey delta_a[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey delta_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "@SGD@SR Mod-Obs"
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC"
+
+set view 8
+shade/nolabels/set/lev=($lev)/nokey/axes=1,0,0,1/hlim=-75:85 delta_p[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+!ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey delta_p[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey delta_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC"
+
+set view 12
+shade/nolabels/set/lev=($lev)/z=5500:0/axes=0,1,0,1/hlim=-75:85/nokey delta_i[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0.16 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+!ppl SHAKEY 1, 1, 0.16, 2, 5, , `($ppl$xlen)*0.99`,`($ppl$xlen)*1.1`, `($ppl$ylen)*0.5`,`($ppl$ylen)*1.46`
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey delta_i[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey delta_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

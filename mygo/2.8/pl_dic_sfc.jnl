@@ -1,0 +1,41 @@
+!***********************************************************************
+! Description: plots surface DIC for Model vs. GLODAP
+! observations
+!
+! use: go pl_dic_sfc l=1:12@ave 1 "My Model"
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $2 : data set e.g. 1 or model.output.nc
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def sym tav = $1%l=1%
+def sym dataset = $2%1%
+def sym model = $3%MODEL%
+def sym opt = /lev=(1830,2400,40)
+go portraitNxN 2 3 60 24
+!set win/asp=0.9
+set reg/x=120:480
+set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+
+set view 1
+use "/raid1/aschmitt/data/glodap/TCO2.nc"
+let dic_mg = tco2[gx=dic[d=($dataset)],gy=dic[d=($dataset)]]
+shade/nolab($opt) dic_mg[z=0:50@ave]
+fill/nolab/o($opt) dic_mg[z=0:50@ave]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "DIC (umol kg^-^1)"
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 "Obs 1995"
+
+set view 3
+use $2%1%
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9 ! ocean mean salinity
+let alk2 = dic*salinity/sbar ! normalize with salinity to get insitu concentration
+let/title="Total Carbon Dioxide"/units="umol/kg" alk1 = alk2/rho*1e6 !convert from mol/m^3 to umol/kg
+shade/nolab($opt) alk1[k=1,($tav)]
+fill/nolab/o($opt) alk1[k=1,($tav)]
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)

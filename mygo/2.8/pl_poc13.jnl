@@ -1,0 +1,101 @@
+!***********************************************************************
+! Description: plots surface POC13 data for Model vs. Goericke 
+! observations
+!
+! use: go pl_poc13 l=1:12@ave 1 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def sym dataset = $1%1%
+def sym tav = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(-inf)(-35,-15,2)(inf)
+go portraitNxN 2 3 90 30
+!set win/asp=0.9
+set reg/x=120:480
+set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal centered
+pal blue_darkred
+pal default
+
+use "/home/aschmitt/data/c13/goericke94/poc13.nc"
+set axis/modulo xax5
+
+file/var=lat,lon0,c13poc,temp,co2aq,ep,logco2 "/home/aschmitt/data/c13/goericke94/Goericke_1994_d13C.dat"
+let lon = lon0*(-1)     ! longitude
+let lat1 = if c13poc lt 0 then lat
+let c13poc1 = if c13poc lt 0 then c13poc
+
+use ($dataset)
+set reg/x=30:390
+
+let redctn = 7.
+let rstd = 1.
+let roc = detrc13/poc
+let rdic = dic13/dic
+let ddic = (rdic/rstd-1)*1000
+let dphyt = (phytc13/(phyt*redctn*rstd)-1)*1000
+let dzoop = (zoopc13/(zoop*redctn*rstd)-1)*1000
+let ddetr = (detrc13/(detr*redctn*rstd)-1)*1000
+let ddiaz = (diazc13/(diaz*redctn*rstd)-1)*1000
+
+def grid/x=phyt[d=($dataset)]/y=phyt[d=($dataset)] mg
+let poc13mg0 = poc13[d=poc13.nc,g=mg@ave]
+let poc13mg = poc13mg0+q*0 ! masking
+let p = poc13mg
+let q = ddetr[z=0:100@ave,d=($dataset),($tav)]
+let q1 = ddetr[k=2,d=($dataset),($tav)]
+let q2 = ddetr[k=1,d=($dataset),($tav)]
+
+let modatobs = samplexy(q,lon[d=Goericke_1994_d13C.dat],lat[d=Goericke_1994_d13C.dat])
+let modatobs1 = samplexy(q1,lon[d=Goericke_1994_d13C.dat],lat[d=Goericke_1994_d13C.dat])
+let modatobs2 = samplexy(q2,lon[d=Goericke_1994_d13C.dat],lat[d=Goericke_1994_d13C.dat])
+let lat2 = samplexy(q*0+y,lon[d=Goericke_1994_d13C.dat],lat[d=Goericke_1994_d13C.dat])
+
+set view 1
+shade/set/nolab/($lev) p
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) p
+sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "@SGd@SR^1^3POC (permil)"
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 "OBS"
+
+set view 3
+
+shade/set/nolab/($lev) q
+ppl shakey 1,1,0.16
+ppl AXLSZE 0. 0.16
+ppl shade
+fill/nolab/o/($lev) q
+sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 ($model)
+
+set view 5
+pl/set/nolab/vlim=-35:-15/thick=3 p[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+!ppl ylab Sea-Air CO_2 Flux (mol m^-^2 yr^-^1)
+ppl yfor (i4)
+ppl plot
+pl/nolab/o/li/col=red/thick=3 q[x=@ave]
+!pl/nolab/o/li/col=green/thick=3 q1[x=@ave]
+!pl/nolab/o/li/col=blue/thick=3 q2[x=@ave]
+pl/o/nolab/vs/thick=3/li/col=black {10,30,10},{-30,-30,-30}; label -20 -30  -1,0,0.2 "OBS"
+pl/o/nolab/vs/li/col=red/thick=3 {10,30},{-33,-33}; label -20 -33  -1,0,0.2 "MODEL"
+
+pl/o/vs/col=black/d=Goericke_1994_d13C.dat/nol/size=.2 lat1, c13poc1
+pl/o/vs/col=red/d=($1)/nol/size=.2 lat2, modatobs
+!pl/o/vs/col=green/d=($1)/nol/size=.2 lat2, modatobs1
+!pl/o/vs/col=blue/d=($1)/nol/size=.2 lat2, modatobs2
+
+can reg/x
+
+go regressxy

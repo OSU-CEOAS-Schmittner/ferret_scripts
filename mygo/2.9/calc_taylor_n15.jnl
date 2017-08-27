@@ -1,0 +1,22 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+go calc_dn15
+
+let n15m = d15no3[d=($dataset),($tim)]
+go set_ocean n15m
+
+use "/home/aschmitt/data/somes10gbc/d15no3_mean.nc"
+!set axis/modulo xax5
+set axis/depth depth
+!set axis/modulo xt
+define grid/like=o_din15[d=($dataset)]/t=dn15_mean mg
+let n15_mg = dn15_mean[g=mg@ave,d=d15no3_mean]
+go set_ocean dn15_mg g_mskhr[d=($dataset)]
+
+let p = n15_mg
+let q = n15m
+let perr = error_mg
+go regressxyz
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]

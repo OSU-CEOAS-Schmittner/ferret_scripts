@@ -1,0 +1,25 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+let c11 = cfc11[d=($dataset),($tim)]*1e12/1024.5 ! convert from mol/m-3 to pmol/kg
+go set_ocean c11
+
+use "/home/aschmitt/data/glodap/CFC.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=cfc11[d=($dataset)]/t=cfc11 mg
+let cfc11_mg = cfc11[g=mg@ave,d=CFC]
+go set_ocean cfc11_mg mskhr[d=($dataset)]
+let error_mg = cfc11_err[g=mg@ave,d=CFC]
+let dpe_mg = cfc11_mg + error_mg
+let dme_mg = cfc11_mg - error_mg
+go set_ocean dpe_mg mskhr[d=($dataset)]
+go set_ocean dme_mg mskhr[d=($dataset)]
+let p = cfc11_mg
+let q = c11
+! perr = error of obs + model error
+! model error was estimated by Q_MIN_P_SQ[X=@AVE,Y=@AVE,Z=@AVE]^0.5 from
+! Kv=0.15
+let model_error = 0.21
+let perr = (error_mg^2 + model_error^2)^.5
+go regressxyz2

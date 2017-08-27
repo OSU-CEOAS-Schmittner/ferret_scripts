@@ -1,0 +1,69 @@
+! compares simulated oxygen profiles horizontally averaged in each basin
+! use: yes? use mydata.nc; set reg/l=10; go pl_o2_xyav.jnl (dataset)
+def symbol dataset = $1%1%
+go portraitNxN 2 5 7 55
+let nstar = no3-16*nutr+3
+go set_ocean nstar
+
+use "/raid1/aschmitt/data/woa01/no3.cdf"
+use "/raid1/aschmitt/data/woa01/po4.cdf"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=nutr[d=1]/t=PHOSPHATE mg
+let po4_mg = PHOSPHATE[g=mg,d=po4]
+let no3_mg = NITRATE[g=mg,d=no3]
+let nstar_mg = no3_mg-16*po4_mg+3
+go set_ocean nstar_mg mskhr[d=1]
+
+ppl AXLSZE 0.16 0.16
+!ppl AXNMTC,1,0
+set view 1
+plot/axes=1,0,1,0/nolab/hlim=-8:3:1 nstar_mg[x=@ave,y=@ave,d=lev_annual]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Global"
+ppl AXLSZE 0.0 0.16
+
+use ($dataset)
+plot/ov/nolab nstar[x=@ave,y=@ave]
+
+go legline_zdown 1, 1, 1500, 1, .2, "Obs."
+go legline_zdown 1, 1, 2500, 2, .2, "Model"
+
+set view 3
+set reg/y=40s:90n
+plot/axes=1,0,1,0/nolab/hlim=-8:3:1 nstar_mg_a[x=@ave,y=@ave,d=lev_annual]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Atlantic"
+
+use ($dataset)
+plot/ov/nolab nstar_a[x=@ave,y=@ave]
+
+set view 5
+plot/axes=1,0,1,0/nolab/hlim=-8:3:1 nstar_mg_i[x=@ave,y=@ave,d=lev_annual]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Indian"
+
+use ($dataset)
+plot/ov/nolab nstar_i[x=@ave,y=@ave]
+
+set view 7
+plot/axes=1,0,1,0/nolab/hlim=-8:3:1 nstar_mg_p[x=@ave,y=@ave,d=lev_annual]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Pacific"
+
+use ($dataset)
+plot/ov/nolab nstar_p[x=@ave,y=@ave]
+
+ppl AXLSZE 0.16 0.16
+set view 9
+can reg/y
+plot/axes=1,1,1,0/nolab/hlim=-8:3:1 nstar_mg_s[x=@ave,y=@ave,d=lev_annual]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Southern Ocean"
+
+use ($dataset)
+plot/ov/nolab nstar_s[x=@ave,y=@ave]
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 "N^* (mmol/m^3)"
+
+let p = nstar_mg
+let q = nstar
+go regressxyz
+
+
+

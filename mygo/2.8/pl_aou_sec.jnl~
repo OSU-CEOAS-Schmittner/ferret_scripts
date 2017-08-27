@@ -1,0 +1,144 @@
+!***********************************************************************
+! Description: plots oxygen sections for Model vs. Levitus
+! observations
+!
+! use: go pl_o2_sec l=1:12 1 "My Model"
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $2 : data set e.g. 1 or model.output.nc
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def sym tav = $1
+def sym model = $3%MODEL%
+use lev_annual
+set axis/depth zt
+set axis/modulo xt
+let o2_lev = o2[d=lev_annual]*1.025 ! mmol/m^3
+let o2sat_lev = o2sat(temp[d=lev_annual],salt[d=lev_annual])*1000 ! mmol/m^3
+let aou_lev = o2sat_lev-o2_lev ! mmol/m^3
+go portraitNxN 2 3 15 20
+use $2%1%
+!let o2m = o2
+!let tempm = temp
+let aou = (o2sat(tempm-273.15,salinity)-o2m)*1000
+
+! ATLANTIC
+ppl shaset reset
+set reg/x=25w/y=80s:75n/z=0:5400
+set view 1
+define symbol lev = (-inf)(20,330,20)(inf)
+shade/nolabels/set/lev=($lev)/nokey aou[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl labset, 0.0, 0.0, 0, 0.2
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey aou[($tav)]
+con/ov/nolabels/lev=($lev)/nokey/set aou[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(aou[($tav)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 ($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC 25 W"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*1.27` 0,0,0.2 "APPARENT OXYGEN UTILIZATION(mmol/m^3)"
+
+set view 2
+ppl shaset reset
+shade/nolabels/set/lev=($lev) aou_lev[($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl conset .2 4 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey aou_lev[($tav)]
+con/set/ov/nolabels/lev=($lev)/nokey aou_lev[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(aou_lev[($tav)],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "LEVITUS"
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC 25 W"
+
+! PACIFIC
+ppl shaset reset
+set view 3
+set reg/x=150w/y=-80:65
+shade/nolabels/set/lev=($lev)/nokey aou[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey aou[($tav)]
+con/set/ov/nolabels/lev=($lev)/nokey aou[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(aou[($tav)],-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC 150 W"
+
+set view 4
+shade/nolabels/set/lev=($lev) aou_lev[($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey aou_lev[($tav)]
+con/set/ov/nolabels/lev=($lev)/nokey aou_lev[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(aou_lev[($tav)],0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC 150 W"
+
+
+ppl shaset reset
+! INDIAN
+set view 5
+SET REG/X=65E/y=-70:30
+shade/nolabels/set/lev=($lev)/nokey aou[($tav)]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey aou[($tav)]
+con/set/ov/nolabels/lev=($lev)/nokey aou[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(aou[($tav)],-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN 65 E"
+
+set view 6
+shade/nolabels/set/lev=($lev)/z=5500:0 aou_lev[($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey aou_lev[($tav)]
+con/set/ov/nolabels/lev=($lev)/nokey aou_lev[($tav)]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(aou_lev[($tav)],0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN 65 E"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

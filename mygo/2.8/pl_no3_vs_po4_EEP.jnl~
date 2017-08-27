@@ -1,0 +1,40 @@
+go portraitNxN 2 2 90 15
+use time_mean.05101.01.01.nc
+use lev_annual
+set reg/x=160w:70w/y=30s:30n
+let po4_mg = po4[d=2,gx=nutr[d=1],gy=nutr[d=1],gz=nutr[d=1]]
+let no3_mg = no3[d=2,gx=nutr[d=1],gy=nutr[d=1],gz=nutr[d=1]]
+let o2_mg = o2[d=2,gx=nutr[d=1],gy=nutr[d=1],gz=nutr[d=1]]
+
+
+! Levitus
+set view 1
+use 2
+set reg/z=0:1000
+let oxy = o2_mg
+let one = if oxy lt 7 then 1
+
+pl/set/vlim=0:3.5/hlim=0:40/nolab/vs/d=2 no3_mg,po4_mg
+ppl ylab "PO_4 (mmol/m^3)"
+ppl plot
+pl/nolab/vs/d=2/o/col=blue no3_mg*one,po4_mg*one
+pl/o/li/nolab/vs/col=green/thick=2 {0,40},{0,2.5}
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.1` 0,0,0.15 "Eastern Tropical Pacific (160W:70W,30S:30N,0:1000m)"
+label/nouser `($ppl$xlen)*.2` `($ppl$ylen)*.8` 0,0,0.2 "Levitus"
+
+! model
+set view 3
+set reg/l=3
+use 1
+let oxy = o2*1000
+let po4 = nutr
+pl/set/vlim=0:3.5/hlim=0:40/nolab/vs/d=1/col=black no3,po4
+ppl xlab "NO_3 (mmol/m^3)"
+ppl ylab "PO_4 (mmol/m^3)"
+ppl plot
+pl/nolab/vs/d=1/o/col=blue no3*one,po4*one
+pl/li/o/nolab/vs/col=green/thick=2 {0,40},{0,2.5}
+label/nouser `($ppl$xlen)*.2` `($ppl$ylen)*.8` 0,0,0.2 "Model"
+
+can var po4
+can reg

@@ -1,0 +1,10 @@
+!
+! Description: send file ferret.ps to printer
+!              ChA , Dec '96 
+!              TC    Aug '97
+!------------------------------------------------------------------
+PPL CLSPLT
+spawn Fprint -o ferret.ps metafile.plt
+!spawn ghostview ferret.ps &
+spawn rm -f metafile.plt
+

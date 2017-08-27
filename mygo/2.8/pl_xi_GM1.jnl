@@ -1,0 +1,72 @@
+!***********************************************************************
+! Description: plots meridional overturning from UVic or OM3 model
+!
+! arguments  :  $1 : file name
+!               $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+
+!query/ignore $1%<Use: GO pl_xi filename%
+define symbol tav = $2%l=1%
+use $1%1%
+!go calc_xi_GM
+palette gray
+go portraitNxN 2 2 10 13
+set win/asp=0.8
+
+set view 1
+shade/nolabels/nokey/lev=(-99)/y=-90:90/set missing(xi_tot[($tav)],-99)
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+contour/ov/lev=(-60,60,2)/nolab xi_tot[($tav)]
+shade/nolabels/nokey/lev=(-99)/ov missing(xi_tot[($tav)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "WORLD OCEAN"
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*1.23` 0,0,0.2 "MERIDIONAL OVERTURNING (Sv)"
+
+set view 2
+shade/nolabels/nokey/lev=(0)/y=-35:80/set missing(xi_tot_a[($tav)],0)
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+contour/ov/lev=(-60,60,2)/nolab xi_tot_a[($tav)]
+shade/nolabels/nokey/lev=(0)/ov missing(xi_tot_a[($tav)],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "ATLANTIC"
+
+set view 3
+shade/nolabels/nokey/lev=(0)/y=-35:70/set missing(xi_tot_p[($tav)],0)
+PPL DFLTFNT DR
+!ppl ylab DEPTH (m)
+ppl xlab LATITUDE
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.15, 0, 0.12
+ppl shade
+contour/ov/lev=(-60,60,2)/nolab xi_tot_p[($tav)]
+shade/nolabels/nokey/lev=(0)/ov missing(xi_tot_p[($tav)],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "PACIFIC"
+
+set view 4
+shade/nolabels/nokey/lev=(0)/y=-35:30/set missing(xi_tot_i[($tav)],0)
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl xlab LATITUDE
+ppl AXLSZE 0.15 0.
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.15, 0.15, 0.12
+ppl shade
+contour/ov/lev=(-60,60,2)/nolab xi_tot_i[($tav)]
+shade/nolabels/nokey/lev=(0)/ov missing(xi_tot_i[($tav)],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "INDIAN"
+
+

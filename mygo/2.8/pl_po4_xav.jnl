@@ -1,0 +1,142 @@
+!***********************************************************************
+! Description: plots preformed PO4 zonally averaged for Model vs. 
+! observations
+!
+! use: go pl_po4pre_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_po4_woa05 ($dataset) ($tim)
+
+go set_ocean pmasked mskhr[d=($dataset)]
+go set_ocean qmasked mskhr[d=($dataset)]
+
+let p = po4_mg
+let q = po4m
+
+go portraitNxN 2 3 15 20
+use ($dataset)
+
+! ATLANTIC
+ppl shaset reset
+set view 1
+define symbol lev = (0,3.6,.2)
+shade/nolabels/set/lev=($lev)/nokey qmasked_a[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl labset, 0.0, 0.0, 0, 0.2
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey qmasked_a[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey qmasked_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(qmasked_a[x=@ave],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 ($model)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*1.27` 0,0,0.2 "PO_4 (mmol/m^3)"
+
+set view 2
+ppl shaset reset
+shade/nolabels/set/lev=($lev) pmasked_a[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl conset .2 4 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey pmasked_a[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey pmasked_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "OBSERVATIONS"
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "ATLANTIC"
+
+! PACIFIC
+ppl shaset reset
+set view 3
+shade/nolabels/set/lev=($lev)/nokey qmasked_p[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey qmasked_p[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey qmasked_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(c14m,-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC"
+
+set view 4
+shade/nolabels/set/lev=($lev) pmasked_p[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey pmasked_p[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey pmasked_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "PACIFIC"
+
+
+ppl shaset reset
+! INDIAN
+set view 5
+shade/nolabels/set/lev=($lev)/nokey qmasked_i[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.2 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey qmasked_i[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey qmasked_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(c14m,-99)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN"
+
+set view 6
+shade/nolabels/set/lev=($lev)/z=5500:0 pmasked_i[x=@ave]
+PPL DFLTFNT DR
+ppl AXLSZE 0.2 0.
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl SHAKEY 1, 1, 0.13, 2, 5
+ppl labset, 0.0, 0.0, 0.2, 0.12
+ppl shade
+fill/ov/nolabels/lev=($lev)/nokey pmasked_i[x=@ave]
+con/set/ov/nolabels/lev=($lev)/nokey pmasked_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+!shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(c14_mg,0)
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*.1` 1,0,0.2 "INDIAN"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

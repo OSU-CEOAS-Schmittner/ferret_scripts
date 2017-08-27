@@ -1,0 +1,61 @@
+! compares simulated nitrate profiles horizontally averaged in each basin
+! use: yes? use mydata.nc; set reg/l=10; go pl_no3_xyav.jnl (dataset)
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+go portraitNxN 2 5 7 55
+go calc_taylor_no3_2.7 ($dataset) ($tim)
+
+!let no3_mg_a = no3_mg[y=40s:90n,d=no3_mean]*nutrm_a[y=40s:90n,d=1]/nutrm_a[y=40s:90n,d=1]
+!let no3_mg_p = no3_mg[y=40s:90n,d=no3_mean]*nutrm_p[y=40s:90n,d=1]/nutrm_p[y=40s:90n,d=1]
+!let no3_mg_i = no3_mg[y=40s:90n,d=no3_mean]*nutrm_i[y=40s:90n,d=1]/nutrm_i[y=40s:90n,d=1]
+!let no3_mg_s = no3_mg[d=no3_mean,y=90s:40s]
+
+ppl AXLSZE 0.16 0.16
+!ppl AXNMTC,1,0
+set view 1
+plot/axes=1,0,1,0/nolab/hlim=0:45:5 no3_mg[x=@ave,y=@ave,d=no3_mean]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Global"
+ppl AXLSZE 0.0 0.16
+
+use ($dataset)
+plot/ov/nolab nutrm[x=@ave,y=@ave]
+
+go legline_zdown 4, 6, 1500, 1, .2, "Observations"
+go legline_zdown 4, 6, 2500, 2, .2, "Model"
+
+set view 3
+set reg/y=40s:90n
+plot/axes=1,0,1,0/nolab/hlim=0:45:5 no3_mg_a[x=@ave,y=@ave,d=no3_mean]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Atlantic"
+
+use ($dataset)
+plot/ov/nolab nutrm_a[x=@ave,y=@ave]
+
+set view 5
+plot/axes=1,0,1,0/nolab/hlim=0:45:5 no3_mg_i[x=@ave,y=@ave,d=no3_mean]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Indian"
+
+use ($dataset)
+plot/ov/nolab nutrm_i[x=@ave,y=@ave]
+
+set view 7
+plot/axes=1,0,1,0/nolab/hlim=0:45:5 no3_mg_p[x=@ave,y=@ave,d=no3_mean]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Pacific"
+
+use ($dataset)
+plot/ov/nolab nutrm_p[x=@ave,y=@ave]
+
+ppl AXLSZE 0.16 0.16
+set view 9
+can reg/y
+plot/axes=1,1,1,0/nolab/hlim=0:45:5 no3_mg_s[x=@ave,y=@ave,d=no3_mean]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Southern Ocean"
+
+use ($dataset)
+plot/ov/nolab nutrm_s[x=@ave,y=@ave]
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 "NO_3 (mmol/m^3)"
+
+
+
+

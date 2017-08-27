@@ -1,0 +1,23 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+let tempm = o_temp[($tim),d=($dataset)]
+let saltm = o_sal[d=($dataset),($tim)]
+let sigm = rho_un(saltm,tempm,0)-1000
+
+set axis/depth depth
+
+use "/home/aschmitt/data/woa05/t00an1.nc"
+define grid/like=tempm[d=($dataset)]/t=T00AN1 mg	 	 ! WOA05
+let temp_mg = T00AN1[g=mg@ave,d=t00an1,l=1]			 ! WOA05
+use "/home/aschmitt/data/woa05/s00an1.nc"
+let salt_mg = S00AN1[g=mg@ave,d=s00an1,l=1]
+let theta_mg = theta_fo(salt_mg,temp_mg,z+0*temp_mg,0)
+let sig_mg = rho_un(salt_mg,theta_mg,0)-1000
+
+go set_ocean sigm g_mskhr[d=($dataset)]
+go set_ocean sig_mg g_mskhr[d=($dataset)]
+
+let p = sig_mg
+let q = sigm
+
+go regressxyz

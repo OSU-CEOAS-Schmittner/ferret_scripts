@@ -1,0 +1,52 @@
+\cancel mode verify
+
+!**************************************************************
+! Description: Plot pattern rms isolines
+!
+! Usage: go taylor_rms [rmax] [levmin] [levmax] [levdelta] [plot_options]
+!
+! arg 1: maximum standard deviation plotted
+! arg 2: minimum rms isoline
+! arg 3: maximum rms isoline
+! arg 4: delta for rms isolines
+! arg 5: plot options e.g. /size=0.2
+!
+! Example:
+!           yes? go taylor_frame.jnl 3 0.2
+!           yes? go taylor_rms 0.4 1 0.2
+!           yes? go taylor_rgraticule.jnl 1.5 
+!
+! Notes:
+!
+! Calls: 
+!
+! Author: Andreas Schmittner
+! Contact: aschmittner@coas.oregonstate.edu
+! $Date: 2006/06/19 
+! $Name:  $
+! $Revision: 1.1 $
+! History:
+! Modification:
+!
+!**************************************************************
+! go 
+! 
+def sym ME_rmax=$1%1.5%
+def sym mylmin=$2%0.1%
+def sym mylmax=$3%1.0%
+def sym myldel=$4%0.2%
+def sym plop=$5%/line=1%
+define axis/x=0:1.5:0.01 xax
+define axis/t=0:1.5:0.01 yax
+define grid/x=xax/y=yax mygrid
+let pi = asin(1)*2
+
+! isolines of pattern RMS error
+let rmss = if (x[g=mygrid]^2+y[g=mygrid]^2)^0.5 le ($ME_rmax) then ((x[g=mygrid]-1)^2 + y[g=mygrid]^2)^0.5
+con/sigdig=1/o/set/nolab/color=1/lev=(($mylmin),($mylmax),($myldel))($plop) rmss
+ppl xlab "Standard Deviation"
+ppl ylab "Standard Deviation"
+ppl contour/ov
+
+set mode verify
+

@@ -1,0 +1,38 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let o2m = o2
+let tempm = temp
+let aou1 = (o2sat(tempm-273.15,salinity)-o2m)*1000
+let aoum = aou1[d=($dataset),($tim)]
+go set_ocean aoum
+
+use "/raid1/aschmitt/data/woa01/aou.cdf"
+use "/raid1/aschmitt/data/woa01/o2.cdf"
+!           Convert from ml/l to mmol/m^3
+let aou_lev = aou[d=aou]/22391.6*1e6
+
+!use lev_annual
+set axis/depth zt
+set axis/modulo xt
+!let o2_lev = o2[d=lev_annual]*1.025 ! mmol/m^3
+let o2_lev = o2[d=o2]/22391.6*1e6 ! mmol/m^3
+!define grid/like=o2m[d=($dataset)]/t=o2_lev mg
+define grid/like=o2m[d=($dataset)]/t=aou_lev mg
+!let o2sat_lev = o2sat(temp[d=lev_annual],salt[d=lev_annual])*1000 ! mmol/m^3
+!let aou_lev = o2sat_lev-o2_lev ! mmol/m^3
+let aou_mg = aou_lev[g=mg]
+let o2_mg = o2_lev[g=mg]
+go set_ocean aou_mg mskhr[d=($dataset)]
+
+!let p = aou_mg[d=lev_annual]
+let p = aou_mg[d=aou]
+let q = aoum
+go regressxyz
+
+let one = if o2m[d=($dataset),($tim)]*1000 lt 5 then 1
+let one_lev = if o2_lev lt 5 then 1
+let o2_min_vol = one[x=@din,y=@din,z=@din]*1e-14
+let o2_min_vol_lev = one_lev[x=@din,y=@din,z=@din]*1e-14
+list o2_min_vol,o2_min_vol_lev
+

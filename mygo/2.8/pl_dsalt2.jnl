@@ -1,0 +1,28 @@
+!***********************************************************************
+! Description: help script for pl_dsalt.jnl
+!***********************************************************************
+
+shade/nolabels/set/($shopt) ($var)[($depth)]
+PPL DFLTFNT DR
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[($depth)],-99)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

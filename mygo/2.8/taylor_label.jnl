@@ -1,0 +1,5 @@
+define symbol xxlab `1.42*rrr`
+define symbol yylab `1.42*sin(acos(rrr))`
+define symbol alphalab `(-90)+180/pi*acos(rrr)`
+define symbol rrlab `rrr`
+label ($xxlab),($yylab),0,($alphalab),0.12,"($rrlab)"

@@ -1,0 +1,20 @@
+file/var=lat,lon0,c13poc,temp,co2aq,ep,logco2 "/home/aschmitt/data/c13/goericke94/Goericke_1994_d13C.dat"
+let lon = lon0*(-1)     ! longitude
+
+use "/home/aschmitt/data/c13/goericke94/poc13.nc"
+set axis/modulo xax5
+
+pl/set/nolab/sym=20/ylim=-40:-15/size=.2 poc13[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl ylab POC13 (permil)
+ppl yfor (f3.1)
+ppl plot
+
+go calc_dc13
+
+use 1
+pl/nolab/o/li/col=red/thick=3 nutr[k=1,x=@ave]
+
+pl/o/nolab/vs/sym=20/size=.2 {-10,0,10},{30,30,30}; label -40 30  -1,0,0.2 "WOA01"
+pl/o/nolab/vs/li/col=red/thick=3 {-10,10},{27,27}; label -40 27  -1,0,0.2 "MODEL"

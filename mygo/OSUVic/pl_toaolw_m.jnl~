@@ -1,0 +1,62 @@
+!***********************************************************************
+! Description: plots top-of-atmosphere net radiation for 
+! PUMA versus ERBE observations
+!
+! use: go pl_toanet 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=1:12@ave or l=2
+!            : $3 : model time (averaging) period e.g. l=1:12@ave or l=2
+!            : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(100,340,20)
+def sym lev2 = lev=(-150,150,20)
+go portraitNxN 2 3 95 30
+!set win/asp=0.9
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal centered
+pal blue_darkred
+let mod = ttr[($mtim),d=($dataset)]*(-1)
+
+use "/home/aschmitt/data/erbe/ERBE_moclim.cdf"
+def grid/like=tsr[d=($dataset)]/t=asr mg
+let obs = olr[($otim),g=mg@ave]
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) obs
+!con/nolab/o/($lev2) obs
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "TOA Outgoing Longwave Radiation (W/m^2)"
+label/nouser `($ppl$xlen)*0.75` `($ppl$ylen)*0.85` 0,0,0.2 "ERBE"
+label/nouser `($ppl$xlen)*0.75` `($ppl$ylen)*0.8` 0,0,0.2 "(1985-1989)"
+
+set view 3
+shade/set/nolab/($lev) mod
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) mod
+!con/nolab/o/($lev2) mod
+go land
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)
+
+set view 5
+let delta = mod - obs
+shade/set/nolab/($lev2)/pal=light_centered delta
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev2)/pal=light_centered delta
+go land
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.95` 1,0,0.15 ($model)-ERBE

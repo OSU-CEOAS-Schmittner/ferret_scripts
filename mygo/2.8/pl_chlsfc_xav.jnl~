@@ -1,0 +1,18 @@
+use "/raid1/aschmitt/data/seawifs/chl_yr.nc"
+def grid/x=phyt[d=1]/y=phyt[d=1]/t=chlyr mg
+let chlm99 = if chlyr then chlyr else (-99)
+let chls = if (chlm99[l=1:12@min] gt 0) and (chlm99[l=1:12@max] lt 40) then chlyr
+let chl_mg chls[g=mg]
+pl/set/nolab/sym=20/vlim=0:1/size=.2 chl_mg[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl ylab Surface 0-50m Chl (uM)
+ppl yfor (f3.1)
+ppl plot
+
+use 1
+go calc_chl_n_ratio
+pl/nolab/o/li/col=red/thick=3 chl[k=1,x=@ave]
+
+pl/o/nolab/vs/sym=20/size=.2 {-10,0,10},{30,30,30}; label -40 30  -1,0,0.2 "WOA01"
+pl/o/nolab/vs/li/col=red/thick=3 {-10,10},{27,27}; label -40 27  -1,0,0.2 "MODEL"

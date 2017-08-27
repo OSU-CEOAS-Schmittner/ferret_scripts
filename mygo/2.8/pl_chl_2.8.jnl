@@ -1,0 +1,60 @@
+! plots surface chlorophyll model + SeaWIFS + WOA01 observations
+! use: go pl_chl [model time] [swtime] [woatime] [plotting options] [label]
+! example: go pl_chl l=20 
+! example: go pl_chl l=2 l=2 lev=(0,5,0.5)/pal=dynamic_cmyk "February" 
+
+go portraitNxN 2 3 90 28
+!set win/asp=1.3
+set reg/x=120:480/k=1
+set axis/modulo xt
+PPL DFLTFNT DR
+pal my_rgb
+!pal light_rainbow
+!pal dymanic_cmyk
+!pal inverse_greyscale
+
+def sym mtime=$1%l=1%
+def sym swtime=$2%l=1:12@ave%
+def sym woatime=$3%l=1:4@ave%
+def sym opt=$4%lev=(-.02)(0.05)(0.1)(0.2)(0.5)(1)(2)(5)%
+def sym opt=$4%lev=(-.02)(0.05)(0.1)(0.15)(0.2,1,.1)(2)(50)%
+def sym opt=$4%lev=(0)(0.05)(0.1)(0.15)(0.2,.5,.1)(.7,1.1,.2)(2)(50)%
+def sym opt=$4%lev=(0)(0.05)(0.1)(0.15)(0.2,.5,.1)(2)(inf)%
+def sym lab=$5%"Annual Mean "%
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+
+set view 5
+go calc_chl_n_ratio_2.8
+fill/set/nolab/($opt) chl[($mtime)]
+ppl shakey ,,.16,,,,,,
+ppl fill
+label/nouser `($ppl$xlen)*.83` `($ppl$ylen)*.8` 0,0,0.2 "Model"
+
+
+use "/raid1/aschmitt/data/seawifs/chl_yr.nc"
+set view 1
+def grid/x=phyt[d=1]/y=phyt[d=1]/t=chlyr mg
+let chlm99 = if chlyr then chlyr else (-99)
+let chls = if (chlm99[l=1:12@min] gt 0) and (chlm99[l=1:12@max] lt 40) then chlyr
+let chl_mg chls[g=mg]
+fill/nolab/($opt) chl_mg[($swtime)]
+ppl shakey ,,.16,,,,,,
+ppl fill
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "($lab) Chlorophyll (mg/m^3)"
+label/nouser `($ppl$xlen)*.83` `($ppl$ylen)*.8` 0,0,0.2 "SeaWiFS"
+
+set view 3
+use "/raid1/aschmitt/data/woa01/chl_seasonal.cdf"
+let mask2 = if C1316AN1[d=chl_seasonal,gx=phyt[d=1],gy=phyt[d=1]] then 1 else 0
+let chl_obs2 = if mask2[l=1:4@ave] eq 1 then C1316AN1[d=chl_seasonal,gx=phyt[d=1],gy=phyt[d=1]]
+fill/nolab/($opt) chl_obs2[($woatime)]
+ppl shakey ,,.16,,,,,,
+ppl fill
+label/nouser `($ppl$xlen)*.83` `($ppl$ylen)*.8` 0,0,0.2 "WOA01"
+
+
+
+
+
+

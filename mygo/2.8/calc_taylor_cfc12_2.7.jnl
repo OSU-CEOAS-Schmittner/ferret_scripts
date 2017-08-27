@@ -1,0 +1,17 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+let c12 = cfc12[d=($dataset),($tim)]*1e12/1024.5 ! convert from mol/m-3 to pmol/kg
+go set_ocean c12
+
+use "/raid1/aschmitt/data/glodap/CFC.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=cfc12[d=($dataset)]/t=cfc12 mg
+let cfc12_mg = cfc12[g=mg,d=CFC]
+go set_ocean cfc12_mg mskhr[d=($dataset)]
+let error_mg = cfc12_err[g=mg,d=CFC]
+let dpe_mg = cfc12_mg + error_mg
+let dme_mg = cfc12_mg - error_mg
+go set_ocean dpe_mg mskhr[d=($dataset)]
+go set_ocean dme_mg mskhr[d=($dataset)]

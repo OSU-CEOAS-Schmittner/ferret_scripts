@@ -1,0 +1,47 @@
+! computes oxygen on an isopycnal surface
+! use: set reg/l=1; go pl_o2_sig 26.5
+
+go portraitNxN 2 2 99 20
+
+def symbol sig=$1%26.5%
+def symbol opt=lev=(0)(5)(10)(50,400,50)
+
+let sig = rho_un(salinity,temp-273.15,temp*0)-1000
+let sigxx = sig[Z=@WEQ:($sig)]
+let intgd = o2*1000*sigxx
+let o2_xx = intgd[z=@sum]
+let intgd_z = z*sigxx
+let z_xx = intgd_z[z=@sum]
+
+use lev_annual
+set axis/depth zt
+set axis/modulo xt
+define grid/like=temp[d=1]/t=temp mg
+let o2_mg = o2[g=mg,d=lev_annual]
+let temp_mg = temp[g=mg,d=lev_annual]
+let salt_mg = salt[g=mg,d=lev_annual]
+let theta_mg = theta_fo(salt_mg,temp_mg,z+0*temp_mg,0)
+let sig_mg = rho_un(salt_mg,theta_mg,0)-1000
+let sigxx_mg = sig_mg[Z=@WEQ:($sig)]
+let intgd_mg = o2_mg*sigxx_mg
+let o2_xx_mg = intgd_mg[z=@sum]
+let intgd_z_mg = z*sigxx_mg
+let z_xx_mg = intgd_z_mg[z=@sum]
+
+set view 1
+ppl AXLSZE 0.0 0.16
+sha/nolab/($opt) o2_xx_mg
+fill/o/nolab/($opt) o2_xx_mg
+!con/nolab/o/lev=(0,6000,50) z_xx_mg
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.1` 0,0,0.2 "Oxygen on @SGs_Q@SR=($sig) isopycnal"
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.05` -1,0,0.2 "Levitus"
+
+
+set view 3
+ppl AXLSZE 0.16 0.16
+use 1
+sha/nolab/($opt) o2_xx
+fill/o/nolab/($opt) o2_xx
+!con/nolab/o/lev=(0,6000,50) z_xx
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.05` -1,0,0.2 "Model"
+

@@ -1,0 +1,60 @@
+!***********************************************************************
+! Description: plots SST differences UVic minus Levitus
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!	            or/and file # e.g. "l=2,d=2"
+!
+!***********************************************************************
+go portrait
+set reg/x=120:480
+
+define symbol tav = $1%l=1%
+set axis/depth zt
+set axis/modulo xt
+set data/save
+use lev_annual
+set data/restore
+define grid/like=temp/t=temp[d=lev_annual] mg
+let salt_mg = salt[g=mg,d=lev_annual]
+let dsalt = salinity[($tav)]-salt_mg
+let temp_mg = temp[g=mg,d=lev_annual]
+let dtemp = temp[($tav)]-273.15-temp_mg
+let dsst = dtemp[k=1]
+let dsss = dsalt[k=1]
+
+
+define view/xlim=0.01:0.99/ylim=0.43:1 upper
+define view/xlim=0.01:0.99/ylim=0:0.57 lower
+
+set view upper
+define symbol lev = (-10,10,1)
+shade/nolabels/set/pal=light_centered/lev=($lev) dsst
+PPL DFLTFNT DR
+ppl AXLSZE 0 0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsst,-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "MODEL minus LEVITUS SST (^oC)"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.17` 0,0,0.2 "($tav)"
+
+set view lower
+define symbol lev = (-5)(-3,3,0.2)(5)
+shade/nolabels/set/pal=light_centered/lev=($lev)/z=-5500:0 dsss
+PPL DFLTFNT DR
+ppl AXLSZE 0 0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsss,-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "MODEL minus LEVITUS SSS"
+
+
+
+
+
+
+
+

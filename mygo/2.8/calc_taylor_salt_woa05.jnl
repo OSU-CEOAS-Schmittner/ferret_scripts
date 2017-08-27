@@ -1,0 +1,30 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+let saltm = salinity[d=($dataset),($tim)]
+go set_ocean saltm
+use "/raid1/aschmitt/data/woa05/s00an1.nc"
+let salt_mg = S00AN1[g=mg@ave,d=s00an1,l=1]
+set axis/depth zt
+set axis/modulo xt
+define grid/like=salinity[d=($dataset)]/t=s00an1 mg
+go set_ocean salt_mg mskhr[d=($dataset)]
+
+use ($dataset)
+let p = salt_mg
+let q = saltm
+
+use "/raid1/aschmitt/data/woa05/s00se1.nc"
+let error_mg = S00SE1[g=mg,d=s00se1,l=1]
+use "/raid1/aschmitt/data/woa05/s00sd1.nc"
+let error_mg = S00SD1[g=mg@ave,d=s00sd1,l=1]
+use "/raid1/aschmitt/data/woa05/s00_total_error.nc"
+! devide by square root of number of WOA grid cells within each 
+! model grid cell
+let error_mg = error_total[g=mg@ave,d=s00_total_error,l=1]/(3.6*1.8)^0.5
+
+! perr = error of obs + model error
+! model error can be estimated by Q_MIN_P_SQ[X=@AVE,Y=@AVE,Z=@AVE]^0.5
+let model_error = .184
+let perr = if (error_mg) then ((error_mg^2 + model_error^2)^0.5) else model_error
+go regressxyz2
+

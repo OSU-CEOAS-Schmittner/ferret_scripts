@@ -1,0 +1,6 @@
+!	standard ratio
+let rc14std = 1.176e-12
+
+let d14dic = (O_dic14/(O_dic-O_dic14)/rc14std-1)*1000
+
+

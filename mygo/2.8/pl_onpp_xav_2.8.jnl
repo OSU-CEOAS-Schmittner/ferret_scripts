@@ -1,0 +1,47 @@
+go portrait
+def view/xlim=0.1:0.9/ylim=0.3:0.8 up
+set view up
+PPL DFLTFNT DR
+
+use "/home/aschmitt/data/gregg03/pp_cz.nc"
+use "/home/aschmitt/data/gregg03/pp_sw.nc"
+use "/home/aschmitt/data/antoine96/pp_sbx5.nc"
+use "/home/aschmitt/data/behrenfeld05/pp.nc"
+let pp_obs1 = pp[d=pp,l=@ave,gx=phyt[d=1],gy=phyt[d=1]]*365/1000
+let pp_obs = pp[d=pp_cz,gx=phyt[d=1],gy=phyt[d=1]]
+let pp_obs2 = pp[d=pp_sw,gx=phyt[d=1],gy=phyt[d=1]]
+let pp_obs3 = ppsbx[d=pp_sbx5,gx=phyt[d=1],gy=phyt[d=1]]
+
+let P = pp_obs[x=@sbx:3]
+let P1 = pp_obs1[x=@sbx:3]
+let P2 = pp_obs2[x=@sbx:3]
+let P3 = pp_obs3[x=@sbx:3]
+let Q = pp_model[x=@sbx:3]
+
+!can reg
+pl/set/nolab/thick=2/sym=20/ylim=0:400 p[x=@ave,j=1:100:2]
+ppl AXLSZE 0.16 0.16
+ppl markh, 1, 0.2
+ppl LABSET,,0.2,0.2,
+ppl ylab (g C m^-^2 y^-^1)
+ppl yfor (i3)
+ppl plot
+pl/nolab/thick=2/col=red/o p1[x=@ave,j=1:100:2]
+pl/set/nolab/thick=2/sym=18/o p2[x=@ave,j=1:100:2]
+ppl markh, 1, 0.1
+ppl plot/ov
+pl/set/nolab/thick=2/sym=28/o p3[x=@ave,j=1:100:2]
+ppl markh, 1, 0.1
+ppl plot/ov
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.1` 0,0,0.2 "Primary Production "
+
+use 1
+let fac = 6.6*12*365*3600*24
+let pp_model = onpp[z=@din]*fac
+pl/nolab/o/line=7 q[x=@ave]
+
+pl/o/nolab/vs/thick=2/sym=20 {-80,-60,-70},{340,340,340}; label -55 340 -1,0,0.2 "G03 CZCS "
+pl/o/nolab/vs/thick=2/sym=18 {-80,-60,-70},{370,370,370}; label -55 370 -1,0,0.2 "G03 SeaWIFS"
+pl/o/nolab/vs/thick=2/sym=28 {-80,-60,-70},{310,310,310}; label -55 310 -1,0,0.2 "A96"
+pl/o/nolab/vs/li/col=black/thick=3 {20,40},{370,370}; label 45 370 -1,0,0.2 "Model"
+

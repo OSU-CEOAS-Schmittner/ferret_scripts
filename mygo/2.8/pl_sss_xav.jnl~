@@ -1,0 +1,12 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+def sym opt=hlim=34.0:36.0:0.5
+!set reg/z=0:1000
+go portraitNxN 2 5 7 55
+go calc_taylor_salt ($dataset) ($tim)
+
+pl salt_mg_a[x=@ave,k=1],salt_mg_p[x=@ave,k=1],salt_mg_i[x=@ave,k=1]
+pl /o /col=black/dash saltm_a[x=@ave,k=1]
+pl /o /col=red/dash saltm_p[x=@ave,k=1]
+pl /o /col=green/dash saltm_i[x=@ave,k=1]

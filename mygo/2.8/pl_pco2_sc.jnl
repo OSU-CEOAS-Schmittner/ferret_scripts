@@ -1,0 +1,52 @@
+!***********************************************************************
+! Description: plots surface ocean pCO2 for Model vs. Takahashi
+! observations for February and August 
+!
+! Model output must have 12 monthly timeaverages
+!
+! use: use my_model_output.nc; go pl_pco2_sc "My Model"
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $2 : data set e.g. 1 or model.output.nc
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def sym model = $3%MODEL%
+go portraitNxN 2 2 10 14
+set win/asp=0.9
+set reg/x=120:480
+set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal centered
+def sym lev=/lev=(-220)(-100,100,10)(220)
+let dpco2m = pco2-pco2[x=@ave,y=@ave]
+
+set view 1
+use "/home/sungw158/data/takahashi/fluxdata.cdf"
+let dpco2_mg = dpCO2[gx=pco2[d=1],gy=pco2[d=1]]
+shade/nokey/nolab($lev)/ylim=90s:90n dpco2[l=2]
+fill/nokey/nolab/o($lev) dpco2[l=2]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Ocean @SGD@SRpCO_2 (ppmv) February"
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 "Obs 1995"
+
+set view 3
+use $2%1%
+shade/nokey/nolab($lev) dpco2m[l=2]
+fill/nokey/nolab/o($lev) dpco2m[l=2]
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)
+use "/home/sungw158/data/takahashi/fluxdata.cdf"
+set view 2
+
+shade/nolab($lev)/ylim=90s:90n dpco2[l=8]
+fill/nolab/o($lev) dpco2[l=8]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Ocean @SGD@SRpCO_2 (ppmv) August"
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 "Obs 1995"
+
+set view 4
+use $2%1%
+shade/nolab($lev) dpco2m[l=8]
+fill/nolab/o($lev) dpco2m[l=8]
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)

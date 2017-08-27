@@ -1,0 +1,30 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+go portrait
+set reg/x=120:480
+set axis/modulo xt
+def view/xlim=0:1/ylim=.35:1/text=1.5 1
+def view/xlim=0:1/ylim=0:.65/text=1.5 2
+def sym opt=lev=(0,44,4)(inf)
+
+set view 1
+use "/raid1/aschmitt/data/behrenfeld05/pp.nc"
+def grid/like=phyt[d=($dataset)]/t=c mg
+let phyt_obs = c[gt=phyt[d=($dataset)]@asn,gxy=mg@ave]
+
+let year = 3600*24*365
+let redctn = 7
+let fac = redctn*12
+let dt = temp-temp[k=1]
+let mld = dt[z=@loc:-0.5]
+let pmskd = if z le mld then phyt+diaz
+let phyt_model = pmskd[z=@ave,d=($dataset)]*fac
+
+let pq = phyt_obs*phyt_model
+let pqmask = pq-pq  ! 0 or "missing" so all variables share the same missing
+let pmasked = phyt_obs + pqmask
+let qmasked = phyt_model + pqmask
+
+ppl axlsze .11 .11
+pl/nolab pmasked[($tim),x=@ave],qmasked[($tim),x=@ave]
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*.04` 1,0,0.14 "Model"

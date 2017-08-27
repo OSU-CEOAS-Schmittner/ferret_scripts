@@ -1,0 +1,13 @@
+! calculates horizontal streamfunction
+!let vg = missing(v,1e-40)
+!let/title="Streamfunction"/units="Sv" strfv = if (v[k=1]) then vg[z=@din,x=@iin]*1e-6
+let ug = missing(u,0)
+let/title="Streamfunction"/units="Sv" strf = if (u[z=0]) then ug[z=@din,y=@iin]*1e-6
+let/title="Streamfunction"/units="Sv" strf = if (u[z=0]) then (ug[z=@din,y=@iin]-ug[z=@din,y=@din])*1e-6
+
+let ACC = strf[x=63W,y=64S]*(-1) ! ACC at Drake Passage
+
+go set_drain2 v
+!let va = missing(v_a,1e-40)
+let va = missing(v_a,0)
+let/title="Streamfunction"/units="Sv" strf_a = if (v_a[k=1]) then va[z=@din,x=@iin]*1e-6

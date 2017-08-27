@@ -1,0 +1,36 @@
+!***********************************************************************
+! Description: plots precipitation in model compared to observations
+!
+! arguments  : $1 : data set
+!	     : $2 : time specification e.g. "l=4" 
+! use        : go pl_precip_xav 1 l=4
+!
+!***********************************************************************
+
+go portraitNxN 2 2 95 10
+define symbol lev = (0)(.2)(.5)(1)(2)(5)(10)
+let day = 3600*24
+let prec = precip[d=($1)]*day ! mm/day
+define symbol tav = $2%l=1%
+
+set view 1
+pl/nolab/set/vlim=0:6 prec[x=@ave,($tav)]
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.2
+ppl plot
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "PRECIPITATION (mm/d)"
+
+use "/raid1/aschmitt/data/gpcp_precip/gpcp_mean.nc"
+let prcp_mg = precip[gx=prec,gy=prec,d=gpcp_mean.nc]
+pl/nolabels/col=red/o prcp_mg[x=@ave]
+go legline -40, 20, 1, 1, .2, "Model"
+go legline -40, 20, 0.5, 2, .2, "@c002GPCP"
+
+let q = log(prec[($tav)])
+let p = log(prcp_mg)
+go regressxy
+
+let q = log(prec[($tav),x=@ave])
+let p = log(prcp_mg[x=@ave])
+go regressy2

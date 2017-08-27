@@ -1,0 +1,30 @@
+!***********************************************************************
+! Description: plots delta n15 maps for Model and observations
+!
+! use: go pl_n15_xy 1 l=1:12@ave k=1 lev=(-1,10,1) "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : depth (averaging) region e.g. k=1:2 
+!            : $4 : contour levels e.g. lev=(-1,10,1)
+!            : $5 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym reg = $3%k=1%
+define symbol lev = $4%lev=(-inf)(-5,20,1)(inf)%
+def sym model = $5%MODEL%
+
+go calc_taylor_n15 ($dataset) ($tim)
+
+def sym varname = "@SGd@SR^1^5N_N_O_3 (permil)"
+pal orange_blue
+
+set reg/($reg)
+
+go pl_var_xy
+
+ca reg
+

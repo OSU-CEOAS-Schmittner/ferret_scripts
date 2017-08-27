@@ -1,0 +1,81 @@
+!***********************************************************************
+! Description: plots surface sensible heat flux
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_sshf_m 1 l=7:9@ave t=01-jan-0610:01-jan-0620 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=1:12@ave or l=2
+!            : $3 : model time (averaging) period e.g. l=1:12@ave or l=2
+!            : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(-inf)(-90,90,10)(inf)
+def sym lev2 = lev=(-inf)(-80,80,10)(inf)
+go portraitNxN 2 2 5 20
+set win/asp=0.8
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal blue_orange
+
+use climatological_axes
+ca da climatological_axes
+
+use "/home/aschmitt/data/ncep/ncep_mo_clim.cdf"
+let mod0 = upsens[d=($dataset)]			! UVic
+!def grid/like=t2m[d=($dataset)]/t=sshf mg	! PUMA
+!let mod = sshf[d=($dataset)]*(-1)		! PUMA
+let obs0 = sshf[d=ncep_mo_clim]
+
+def grid/like=mod0/t=obs0 mg
+
+let obs = obs0[g=mg@ave,($otim)]
+let mod1 = mod0[($mtim)]
+let mod2 = mod1[gt=month_reg@mod]
+let mod = mod2[($otim)]
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl axlsze 0,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) obs
+go land
+label/nouser `($ppl$xlen)*1.2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface Sensible Heat Flux (W/m^2)"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.95` 1,0,0.16 "NCEP"
+
+
+set view 2
+shade/set/nolab/($lev)/nokey mod
+ppl axlsze .14,0
+ppl shade
+fill/nolab/o/($lev) mod
+go land
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.95` 1,0,0.16 ($model)
+
+set view 3
+let delta = mod - obs
+shade/set/nolab/($lev2) delta
+ppl axlsze .14,.14
+ppl yfor (i3)
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev2) delta
+go land
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.95` 1,0,0.16 Model-NCEP
+
+set view 4
+pl/set/nol/axes=0,1,0,1 obs[x=@ave], mod[x=@ave]
+ppl yfor (i3)
+ppl plot 
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.9` 1,0,0.2 @p2Model
+label/nouser `($ppl$xlen)*0.95` `($ppl$ylen)*0.75` 1,0,0.2 NCEP

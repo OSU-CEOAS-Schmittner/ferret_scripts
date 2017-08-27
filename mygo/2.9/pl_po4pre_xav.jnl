@@ -1,0 +1,48 @@
+!***********************************************************************
+! Description: plots preformed PO4 zonally averaged for Model vs. 
+! observations
+!
+! use: go pl_po4pre_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_aou ($dataset) ($tim)
+go calc_taylor_po4 ($dataset) ($tim)
+
+let redpto = 1/170
+let po4prem = po4m - redpto*aoum
+let po4pre_mg = po4_mg - redpto*aou_mg
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]
+
+let p = po4pre_mg
+let q = po4prem
+
+def sym varname = "Preformed Phosphate (mmol/m^3)"
+define symbol lev = lev=(0,2,.1)(inf)
+define symbol levc = lev=(0,2,.1)(inf)
+pal blue_orange
+
+go pl_var_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+

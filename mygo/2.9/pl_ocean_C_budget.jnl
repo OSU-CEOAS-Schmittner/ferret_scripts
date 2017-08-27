@@ -1,0 +1,30 @@
+! plots whole ocean C budget
+! use: 
+! 1. load tsi file (e.g. "use tsi.00001.01.01.nc")
+! 2. check that the constants used below (e.g.ocean_volume, redptn) 
+! are consistent with your model run
+! 3. run script: yes? go pl_ocean_C_budget
+!
+
+let ocean_volume = 1.35769e18 ! [m]
+let cdic = o_dic*ocean_volume*12*1e-15 
+let/units="PgC"/title="DIC Change" dcdic = cdic-cdic[l=1] 
+
+let redctn=6.625
+let corg = (o_phyt+o_diaz+o_zoop+o_detr)*redctn*ocean_volume*12*1e-15
+let/units="PgC"/title="C_{org} Change" dcorg = corg-corg[l=1]
+
+let redntp = 16.
+let redctp = redctn*redntp
+let cdoc = o_don*redctn*ocean_volume*12*1e-15
+let/units="PgC"/title="DOC Change" dcdoc = cdoc-cdoc[l=1]
+
+let/units="PgC"/title="Total Ocean C" ocarb = cdic+corg+cdoc
+let/units="PgC"/title="Total Ocean C Change" docarb = ocarb-ocarb[l=1]
+
+let ocean_sfc_area = 3.56684e14
+let/units="PgC/s"/title="Ocean C Flux" ocflx = f_dic*ocean_sfc_area*12*1e-15
+let/units="PgC"/title="Integrated Ocean C Flux" ocflxin = ocflx[t=@iin]
+
+pl ocflxin, docarb, dcdic, dcorg, dcdoc
+

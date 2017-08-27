@@ -1,0 +1,22 @@
+! variable chlorophyll to nitrogen ratio 
+! after eq. (18) in Schartau & Oschlies 2003, JMarRes 61, 765pp
+! NOTE: only valid for surface (see below)
+!       doesn't consider light attenuation due to phytoplankton
+!
+! nutrient uptake rate
+let k1 = 0.7 ! SO03
+!let k1 = 0.5 ! SOGES04
+let uu = if nutr ge 0.05 then nutr/(nutr+k1) else 0.091
+
+! following line is only valid for k_w = 0.04, z = 25m
+! attenuation due to phytoplankton neglected 
+! should be (lambda = k_w+k_P*P total attenuation coefficient)
+!           let PAR = 0.4*dnswr*.45*((1-exp(-lambda*z))/(lambda*z)) 
+let lambda = 0.04
+let depth = z+0*temp
+let PAR = 0.4*dnswr*.45*((1-exp((-1)*lambda*depth))/(lambda*depth))
+!let PAR = 0.4*dnswr*.45*(1-1/exp(1)) ! z=25m
+let theta = 0.003+0.0154*(exp(0.05*(temp-273.15)))*exp(-0.059*PAR)*uu
+let chl = 79.5*theta*phyt ! Redfield ratio C:N=6.6
+let chl = 88.5*theta*phyt ! Redfield ratio C:N=7.4
+let chl = 84.5*theta*phyt ! Redfield ratio C:N=7.

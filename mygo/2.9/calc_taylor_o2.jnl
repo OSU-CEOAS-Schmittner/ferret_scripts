@@ -1,0 +1,23 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+set mem/size=30
+let o2m = o_o2[($tim)]*1000
+go set_ocean o2m g_mskhr[d=($dataset)]
+
+use "/home/aschmitt/data/woa05/o00mn1.nc"
+!           Convert from ml/l to mmol/m^3
+let o2_lev = o00mn1[d=o00mn1]/22391.6*1e6
+
+define grid/like=o2m[d=($dataset)]/t=o2_lev mg
+let o2_mg = o2_lev[g=mg@ave,l=1]
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]
+
+set axis/depth depth
+
+use ($dataset)
+let p = o2_mg
+let q = o2m
+
+go regressxyz

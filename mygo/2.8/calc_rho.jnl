@@ -1,0 +1,58 @@
+! this journal calculates the density of seawater using the
+! standard equation of state recommended by unesco(1981).
+!
+! use: go calc_rho temp salt z       for in situ density (default)
+! use: go calc_rho temp salt 0       for in potential density
+!
+! input [units]:
+! in-situ temperature (t): [degrees centigrade]
+! salinity (s): [practical salinity units]
+! pressure (pin): [decibars, approx. as meters of depth]
+! output [units]:
+! density(rho): [kilograms per cubic meter]
+!
+! references:
+! gill, a., atmosphere-ocean dynamics: international geophysical
+! series no. 30. academic press, london, 1982, pp 599-600.
+! unesco, 10th report of the joint panel on oceanographic tables
+! and standards. unesco tech. papers in marine sci. no. 36, 
+! paris, 1981.
+!	
+
+\CANCEL MODE VERIFY 
+define symbol t1 = $1%TEMP%
+define symbol s1 = $2%SALT%
+!let pin = z+t1-t1
+!define symbol pin = $3%z%
+define symbol pin = $3%z+temp-temp%
+       
+let   c1p5 = 1.5e0
+
+! ... convert from depth [m] (decibars) to bars
+let   p = (($pin)) * 1.0e-1
+
+let   rw = 9.99842594e2 + 6.793952e-2*($t1) - 9.095290e-3*($t1)^2 + rw1
+let   rw1= 1.001685e-4*($t1)^3-1.120083e-6*($t1)^4+6.536332e-9*($t1)^5
+
+let   rsto = rsto1 + rsto2 + rsto3
+let   rsto1 = rw+(8.24493e-1 - 4.0899e-3*($t1) + 7.6438e-5*($t1)^2 - 8.2467e-7*($t1)^3 + 5.3875e-9*($t1)^4) * ($s1)
+let   rsto2 = (-5.72466e-3 + 1.0227e-4*($t1) - 1.6546e-6*($t1)^2) * ($s1)^c1p5 
+let   rsto3 = 4.8314e-4*($s1)^2
+
+let   xkw = 1.965221e4 + 1.484206e2*($t1) - 2.327105e0*($t1)^2 + xkw1
+let   xkw1= 1.360477e-2*($t1)^3 - 5.155288e-5*($t1)^4
+
+let   xksto = xksto1 + xksto2
+let   xksto1= xkw+(5.46746e1 - 6.03459e-1*($t1) + 1.09987e-2*($t1)^2 - 6.1670e-5*($t1)^3)*($s1)
+let   xksto2= (7.944e-2 + 1.6483e-2*($t1) - 5.3009e-4*($t1)^2) * ($s1)^c1p5
+
+let   xkstp = xkstp1 + xkstp2 + xkstp3 + xkstp4 + xkstp5
+let   xkstp1 = xksto+(3.239908e0 + 1.43713e-3*($t1) + 1.16092e-4*($t1)^2 - 5.77905e-7*($t1)^3)*p
+let   xkstp2 = (2.2838e-3 - 1.0981e-5*($t1) - 1.6078e-6*($t1)^2) * p * ($s1)
+let   xkstp3 = 1.91075e-4 * p*($s1)^c1p5
+let   xkstp4 = (8.50935e-5 - 6.12293e-6*($t1) + 5.2787e-8*($t1)^2) * p^2
+let   xkstp5 = (-9.9348e-7 + 2.0816e-8*($t1) + 9.1697e-10*($t1)^2) * p^2 * ($s1)
+
+let/title="Density"/unit="kg/m^3"   rho = rsto / (1.0e0 - p/xkstp)
+
+SET MODE/LAST VERIFY

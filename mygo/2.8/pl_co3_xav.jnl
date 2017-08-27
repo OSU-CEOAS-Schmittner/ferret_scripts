@@ -1,0 +1,103 @@
+! compares simulated CO3 with observations zonally averaged in each basin
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+go portraitNxN 2 4 17.5 40
+use "/raid1/aschmitt/data/glodap/TCO2.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dic[d=($dataset)]/t=tco2 mg
+let dic_mg = tco2[g=mg]
+go set_ocean dic_mg mskhr[d=($dataset)]
+
+use "/raid1/aschmitt/data/glodap/ALK.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=alk[d=($dataset)]/t=alk mg
+let alk_mg = alk[g=mg]
+go set_ocean alk_mg mskhr[d=($dataset)]
+
+let co3_mg = alk_mg[d=ALK]-dic_mg[d=TCO2]
+go set_ocean co3_mg mskhr[d=($dataset)]
+
+pal inverse_greyscale
+pal inverse_bluescale
+pal my_rgb
+def sym opt=lev=(-inf)(40,400,40)/vlim=0:5100
+
+set view 1
+ppl AXLSZE 0.0 0.16
+ppl SHAKEY 1, 1, 0.15, 1, 4, 8, 9.4, 10.2, 1.4, 7.4
+fill/nolab/nokey/($opt) co3_mg[x=@ave]
+con/ov/nolab/set/nokey/($opt) co3_mg[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "CO3 (umol/kg) Observations"
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Global"
+
+set view 3
+fill/nolab/nokey/($opt) co3_mg_a[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3_mg_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Atlantic"
+
+set view 5
+fill/nolab/nokey/($opt) co3_mg_p[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3_mg_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Pacific"
+
+set view 7
+ppl AXLSZE 0.16 0.16
+fill/nolab/nokey/($opt) co3_mg_i[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3_mg_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Indian"
+
+use ($dataset)
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9 ! ocean mean salinity
+let dic2 = dic[($tim)]*salinity[($tim)]/sbar ! normalize with salinity to get insitu concentration
+let/title="Total Carbon Dioxide"/units="umol/kg" dic1 = dic2/rho*1e6 !convert from mol/m^3 to umol/kg
+let alk2 = alk[($tim)]*salinity[($tim)]/sbar ! normalize with salinity to get insitu concentration
+let/title="Total Carbon Dioxide"/units="umol/kg" alk1 = alk2/rho*1e6 !convert from mol/m^3 to umol/kg
+let co3=alk1-dic1
+go set_ocean co3
+set axis/depth zt
+
+set view 2
+ppl AXLSZE 0.0 0.0
+fill/nolab/($opt) co3[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Model"
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Global"
+
+set view 4
+fill/nolab/($opt) co3_a[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3_a[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Atlantic"
+
+set view 6
+fill/nolab/($opt) co3_p[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3_p[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Pacific"
+
+set view 8
+ppl AXLSZE 0.16 0.0
+fill/nolab/($opt) co3_i[x=@ave]
+con/set/ov/nolab/nokey/($opt) co3_i[x=@ave]
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*0.9` `($ppl$ylen)*1.02` 0,0,0.2 "Indian"
+
+
+

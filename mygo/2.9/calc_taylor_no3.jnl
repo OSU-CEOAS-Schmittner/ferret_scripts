@@ -1,0 +1,18 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let no3m = o_no3[d=($dataset),($tim)]*1000
+go set_ocean no3m
+set axis/depth depth
+
+use "/home/aschmitt/data/woa05/n00an1.nc"
+define grid/like=no3m/t=N00AN1 mg
+let no3_mg = N00AN1[g=mg,l=1,d=n00an1]
+go set_ocean no3_mg g_mskhr[d=($dataset)]
+
+use ($dataset)
+let p = no3_mg
+let q = no3m
+go regressxyz
+go set_ocean qmasked g_mskhr[d=($dataset)]
+go set_ocean pmasked g_mskhr[d=($dataset)]

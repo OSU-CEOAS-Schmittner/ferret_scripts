@@ -1,0 +1,38 @@
+! compares simulated CFC11 inventory (vertically integrted) 
+! with observations (e.g. http://gecko.rsmas.miami.edu/pubs/WilleyCFC.pdf)
+! use: set data mydata.nc; set reg/l=4; go pl_cfc11_zdin (mydata)
+
+go portraitNxN 2 2 99 20
+let RHO = 1024.5 ! value used in co2calc.f
+let/title="CFC11"/units="mol/m^3" c11 = cfc11[d=CFC]*rho/1e12 !convert from pmol/kg to mol/m^3 
+set reg/x=120:480
+use "/raid1/aschmitt/data/glodap/CFC.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=cfc11[d=1]/t=cfc11 mg
+let cfc11_mg = c11[g=mg]
+go set_ocean cfc11_mg mskhr[d=1]
+
+!pal inverse_greyscale
+def sym opt=lev=(-inf)(0.25)(0.5,2.5,.5)(3.5)(5)(8)(inf)
+
+set view 1
+ppl AXLSZE 0.0 0.16
+ppl SHAKEY 1, 1, 0.15, 1, 4, 8, 9.4, 10.2, 1.4, 7.4
+fill/nolab/($opt) cfc11_mg[z=@din]*1e6
+con/ov/nolab/set/($opt) cfc11_mg[z=@din]*1e6
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "CFC11 Inventory (mol/km^2)"
+label/nouser `($ppl$xlen)*.8` `($ppl$ylen)*.7` 0,0,0.2 "Observations"
+
+use ($1%1%)
+set view 3
+ppl AXLSZE 0.16 0.16
+ppl SHAKEY 1, 1, 0.15, 1, 4, 8, 9.4, 10.2, 1.4, 7.4
+fill/nolab/($opt) cfc11[z=@din]*1e6
+con/ov/nolab/set/nokey/($opt) cfc11[z=@din]*1e6
+ppl conset 0.16,,,,,,,,,
+ppl contour/ov
+label/nouser `($ppl$xlen)*.8` `($ppl$ylen)*.7` 0,0,0.2 "Model"
+

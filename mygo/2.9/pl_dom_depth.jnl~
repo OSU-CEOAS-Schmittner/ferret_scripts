@@ -1,0 +1,84 @@
+!*********************************************************************
+! Description: Plots annual surface model DOP,DON vs. observations
+!              from Somes and Oschlies, 2015, GBC
+!
+! Author(s): Christopher Somes (csomes@geomar.de)
+!
+!
+! Arguments: $1 : model data set or model.output.nc
+! 	     $2 : time (averaging) period, e.g., l=1 or l=1:12@ave
+!            $3 : depth, e.g., 0:50
+!
+! Use: go pl_dom_depth d=1 l=1 0:50
+!*********************************************************************
+
+def symbol model = $1%1%
+def symbol tim = $2%l=1%
+def symbol depth = $3%0:50%
+
+go portraitNxN 3 3 17 20
+set win/asp=0.85
+
+ppl color 6 100,100,100
+
+set region/x=25e:25e
+
+
+ppl dflfnt @DR
+
+! DOP
+go calc_taylor_dop_2.9 ($model) ($tim)
+
+set view 1
+sha/nolabels/set_up/lev=(0,350,25)(inf)/pal=blue_orange dopm[z=($depth)@ave]
+ppl shakey 1,0,.1,2,,,,,4.6,4.85
+ppl shade
+!con/over/nolabels/lev=(.2)(1)(1.8) dopm_dg[z=($depth)@ave]
+sha/nolabels/nokey/lev=(-99)/over/pal=grey_dark missing(dopm[z=($depth)@ave],-99)
+label 27,50,-1,0,.175 @P6 Model
+
+set view 2
+sha/nolabels/nokey/lev=(0,350,25)(inf)/pal=blue_orange dopobs_sr[z=($depth)@ave,l=1:12@ave]
+sha/nolabels/nokey/lev=(-99)/over/pal=black missing(dopobs_sr[z=($depth)@ave,l=1:12@ave],-99)
+go fland 60 grey_dark
+!con/over/lev=(.2)(1)(1.8) dopobs_sr_mg[z=($depth)@ave]
+label 200,105,0,0,0.2, SR-DOP (nM) (($depth)m)
+label 27,50,-1,0,.175 @P6 Obs.
+
+set view 3
+sha/set_up/nolabels/lev=(-inf)(-50,50,10)(inf)/pal=light_centered dopm_dg[z=($depth)@ave]-dopobs_sr[z=($depth)@ave,l=1:12@ave]
+ppl shakey 1,0,.1,2,,,,,4.6,4.85
+ppl shade
+!con/over/nolabels/lev=(-.5)(.5) dopm[z=($depth)@ave]-dopobs_sr_mg[z=($depth)@ave]
+sha/nolabels/nokey/lev=(-99)/over/pal=black missing(dopobs_sr[z=($depth)@ave,l=1:12@ave],-99)
+go fland 60 grey_dark
+label 27,50,-1,0,.175 @P6 Diff
+
+
+! DON
+go calc_taylor_don_2.9 ($model) ($tim)
+
+set view 4
+sha/set_up/nolabels/lev=(0,7,.5)(inf)/pal=blue_orange donm[z=($depth)@ave]
+ppl shakey 1,0,.1,2,,,,,4.6,4.85
+ppl shade
+!con/over/nolabels/lev=(1)(4)(20) donm[z=($depth)@ave]
+sha/nolabels/nokey/lev=(-99)/over/pal=grey_dark missing(donm[z=($depth)@ave],-99)
+label 27,50,-1,0,.175 @P6 Model
+
+set view 5
+sha/nokey/nolabels/lev=(0,7,.5)(inf)/pal=blue_orange donobs_sr[z=($depth)@ave,l=1:12@ave]
+!con/over/nolabels/lev=(1)(5)(10)(20) donobs_sr[z=($depth)@ave,l=1:12@ave]
+sha/nolabels/nokey/lev=(-99)/over/pal=black missing(donobs_sr[z=($depth)@ave,l=1:12@ave],-99)
+go fland 60 grey_dark
+label 200,105,0,0,0.2, SR-DON (@SGm@SRM) (($depth)m)
+label 27,50,-1,0,.175 @P6 Obs.
+
+set view 6
+sha/set_up/nolabels/lev=(-inf)(-2,2,.25)(inf)/pal=light_centered  donm_dg[z=($depth)@ave]-donobs_sr[z=($depth)@ave,l=1:12@ave]
+ppl shakey 1,0,.1,2,,,,,4.6,4.85
+ppl shade
+!con/over/nolabels/lev=(-2.5)(2.5) donm[z=($depth)@ave]-donobs_sr[z=($depth)@ave,l=1:12@ave]
+sha/nolabels/nokey/lev=(-99)/over/pal=black missing(donobs_sr[z=($depth)@ave,l=1:12@ave],-99)
+go fland 60 grey_dark
+label 27,50,-1,0,.175 @P6 Diff

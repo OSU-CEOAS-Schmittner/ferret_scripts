@@ -1,0 +1,29 @@
+! plots whole ocean P budget
+! use: 
+! 1. load tsi file (e.g. "use tsi.00001.01.01.nc")
+! 2. check that the constants used below (e.g.ocean_volume, redptn, diazptn) 
+! are consistent with your model run
+! 3. run script: yes? go pl_ocean_P_budget
+!	if no nitrogen cycle is used set o_diaz and o_dop to zero
+!
+let ocean_volume = 1.35769e18
+let redptn = 1/16
+let diazptn = 1/40
+let/units="TgP"/title="PO_4" po4 = o_po4/redptn
+let facP = ocean_volume*31*1e-12	! TgP 
+let/units="TgP"/title="Total P" p0 = (po4+o_phyt+o_diaz*diazptn/redptn+o_zoop+o_detr+o_dop/redptn+o_cocc)*redptn*facP
+let/units="TgP"/title="@SGD@SRPO_4" dpo4 = (po4-po4[l=1])*redptn*facP
+let/units="TgP"/title="@SGD@SRP_O" dpbar = (o_phyt-o_phyt[l=1])*redptn*facP
+let/units="TgP"/title="@SGD@SRP_D" ddiazbar = (o_diaz-o_diaz[l=1])*diazptn*facP
+let/units="TgP"/title="@SGD@SRZ" dzbar = (o_zoop-o_zoop[l=1])*redptn*facP
+let/units="TgP"/title="@SGD@SRD" ddbar = (o_detr-o_detr[l=1])*redptn*facP
+let/units="TgP"/title="@SGD@SRP_C" dcoccbar = (o_cocc-o_cocc[l=1])*redptn*facP
+let/units="TgP"/title="@SGD@SRDOP" ddopbar = (o_dop-o_dop[l=1])*facP
+
+let/units="TgP"/title="@SGD@SRP" dp0 = p0-p0[l=1] 
+
+set view upper
+pl dp0,dpo4,dpbar,ddiazbar,dcoccbar,dzbar,ddbar,ddopbar
+
+set view lower
+pl dp0,dpo4+dpbar+ddiazbar+dzbar+ddbar+ddopbar+dcoccbar

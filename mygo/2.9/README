@@ -1,0 +1,5 @@
+Mar 18, 2016: this directory contains ferret scripts plotting various
+	UVic/MOBI variables (works with UVic version 2.9)
+
+Jul 29, 2017: updated by removing the "_2.9" parts of the file names
+ 	

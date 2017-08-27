@@ -1,0 +1,7 @@
+let rho_ave = (1035 - rho_a[x=@ave])/1035
+!let/title="Steric Height"/units="m" sth = rho_ave[z=0:925@iin]
+let/title="Steric Height"/units="m" sth = rho_ave[z=0:925@din]-rho_ave[z=0:925@iin]
+let/title="Depth Integrated Steric Height"/units="m^2" phi = sth[z=0:925@din]
+
+
+

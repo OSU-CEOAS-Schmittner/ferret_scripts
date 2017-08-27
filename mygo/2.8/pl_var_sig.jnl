@@ -1,0 +1,16 @@
+! plots model variable "var" on an isopycnal surface
+! use: set reg/l=1; go pl_var_sig var 26.5 lev=(0,30,1)
+
+def symbol var=$1%temp%
+def symbol sig=$2%26.5%
+def symbol opt=$3%pal=default%
+
+let sig = rho_un(salinity,temp-273.15,temp*0)-1000
+let sigma = sig[Z=@WEQ:($sig)]
+let intgd = ($var)*sigma
+let var_xx = intgd[z=@sum]
+
+
+sha/nolab/($opt) var_xx
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.1` 0,0,0.2 "($var) on @SGs_Q@SR=($sig) isopycnal"
+

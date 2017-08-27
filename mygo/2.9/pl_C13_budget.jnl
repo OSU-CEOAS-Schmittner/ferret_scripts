@@ -1,0 +1,11 @@
+
+go pl_land_C13_budget
+go pl_ocean_C13_budget
+
+let rc13std = 0.0112372
+
+let c13ccn = (1 + a_dc13*0.001)*rc13std*a_co2/(1+(1 + a_dc13*0.001)*rc13std)
+let ppmtoPg = 2.1
+let acarb13 = c13ccn*ppmtoPg
+let/units="PgC"/title="Total Atmosphere C13 Change" dacarb13 = acarb13 - acarb13[l=1]
+pl dacarb13, docarb13, dlcarb13

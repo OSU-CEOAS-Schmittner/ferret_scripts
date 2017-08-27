@@ -1,0 +1,114 @@
+! plots zonal average values of rain ratio (export of CaCO3/POM)
+! for comparison with Sarmiento et al. 2002 GBC Fig.4
+! note that Sarmientos values are for 100 m and my for 126 m
+! use: yes? go pl_rainr.jnl dataset time capr dcaco3
+! arguments: dataset = dataset e.g. 1
+!		time = time    e.g. l=1
+!		capr = capr    e.g. 0.03
+!	      dcaco3 = dcaco3  e.g. 4500
+!	     redctn  = redctn  e.g. 7
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def symbol capr = $3%0.03% 
+def symbol dcaco3 = $4%4500% 
+def symbol redctn = $5%7% 
+let exp = expo[K=2]*redctn*75 ! [mmol C/ m^2]
+! uncomment following line to increase export production
+! by 10 % to estimate values at 100 m
+!let exp = expo[K=2]*redctn*75*1.2 ! [mmol C/ m^2]
+let capr=($capr)
+let redctn=($redctn)
+let gamma1=0.925
+let prca = (morp+morz+graz*(1.-gamma1))*capr*redctn
+let prcazin = prca[z=@din]
+let depth = z[gz=zt]
+let dcaco3=($dcaco3)
+let flux = exp(-126/dcaco3)*prcazin
+let rr1 = if exp gt 1e-8 then flux/exp
+let rr = rr1[d=($dataset),($tim)]
+go set_ocean rr
+ppl axlsze .16 .16
+pl/nolab/vlim=0:0.2/col=red/thick rr_a[x=@ave]
+!pl/o/thick/nolab/col=red rr_a[x=@ave]
+pl/o/thick/nolab/col=green rr_p[x=@ave]
+pl/o/thick/nolab/col=blue rr_i[x=@ave]
+!pl/nolab/o/col=black/thick=2 rr[x=@ave]
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.05` 0,0,0.2 "Rain Ratio at 126 m"
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*-.13` 0,0,0.2 "Latitude"
+label/nouser `($ppl$xlen)*.02` `($ppl$ylen)*.95` -1,0,0.16 "Blue: Indian"
+label/nouser `($ppl$xlen)*.02` `($ppl$ylen)*.85` -1,0,0.16 "Green: Pacific"
+label/nouser `($ppl$xlen)*.02` `($ppl$ylen)*.75` -1,0,0.16 "Red: Atlantic"
+
+let rr_obs_a = {0.023,0.014,0.084,0.066,0.020}
+let lat_obs_a = {65,30,0,-30,-65}
+
+let rr_obs = {0.003,0.023,0.043}
+let lat_obs = {65,65,65}
+pl/thick/nolab/o/vs/li/col=red lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=red/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {-0.005,0.014,0.033}
+let lat_obs = {30,30,30}
+pl/thick/nolab/o/vs/li/col=red lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=red/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.079,0.084,0.089}
+let lat_obs = {0,0,0}
+pl/thick/nolab/o/vs/li/col=red lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=red/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.05,0.066,0.082}
+let lat_obs = {-30,-30,-30}
+pl/thick/nolab/o/vs/li/col=red lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=red/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {-0.02,0.020,0.042}
+let lat_obs = {-60,-60,-60}
+pl/thick/nolab/o/vs/li/col=red lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=red/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {-0.01,0.003,0.016}
+let lat_obs = {-61,-61,-61}
+pl/thick/nolab/o/vs/li/col=blue lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=blue/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.085,0.099,0.113}
+let lat_obs = {-30,-30,-30}
+pl/thick/nolab/o/vs/li/col=blue lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=blue/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.095,0.099,0.103}
+let lat_obs = {0,0,0}
+pl/thick/nolab/o/vs/li/col=blue lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=blue/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.01,0.027,0.044}
+let lat_obs = {31,31,31}
+pl/thick/nolab/o/vs/li/col=blue lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=blue/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.054,0.061,0.068}
+let lat_obs = {60,60,60}
+pl/thick/nolab/o/vs/li/col=green lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=green/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.037,0.048,0.059}
+let lat_obs = {30,30,30}
+pl/thick/nolab/o/vs/li/col=green lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=green/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.082,0.087,0.092}
+let lat_obs = {1,1,1}
+pl/thick/nolab/o/vs/li/col=green lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=green/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.028,0.045,0.062}
+let lat_obs = {-31,-31,-31}
+pl/thick/nolab/o/vs/li/col=green lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=green/i=2/size=.13/sym=18 lat_obs,rr_obs
+
+let rr_obs = {0.008,0.017,0.026}
+let lat_obs = {-59,-59,-59}
+pl/thick/nolab/o/vs/li/col=green lat_obs,rr_obs
+pl/thick/nolab/o/vs/li/col=green/i=2/size=.13/sym=18 lat_obs,rr_obs
+

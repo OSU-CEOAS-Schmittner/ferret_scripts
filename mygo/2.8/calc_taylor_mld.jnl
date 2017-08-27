@@ -1,0 +1,18 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+let tem = temperature[d=($dataset)]-273.15
+let sam = salinity[d=($dataset)]
+let rhom = rho_un(sam,tem,tem*0)-1000
+let drho = rhom-rhom[k=1]
+let mldm0 = drho[z=@loc:0.125]
+let mldm = mldm0[($tim)]
+use "/home/aschmitt/data/monterey97/mld.pd.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=tem[d=($1)]/t=mld mg
+let mld_mg = mld[g=mg,d=mld.pd,l=1:12@ave]
+
+let p = mld_mg
+let q = mldm
+go regressxy
+

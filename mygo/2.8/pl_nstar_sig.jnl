@@ -1,0 +1,61 @@
+! computes oxygen on an isopycnal surface
+! use: set reg/l=1; go pl_o2_sig 26.5
+
+go portraitNxN 2 2 99 20
+
+def symbol sig=$1%26.5%
+def symbol opt=lev=(-inf)(-8)(-6)(-4,4,1)(6)(8)(inf)
+set reg/x=30:390/y=60s:60n
+pal orange_blue
+
+use "/raid1/aschmitt/data/woa01/temp.cdf"
+use "/raid1/aschmitt/data/woa01/salt.cdf"
+use "/raid1/aschmitt/data/woa01/no3.cdf"
+use "/raid1/aschmitt/data/woa01/po4.cdf"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=nutr[d=1]/t=PHOSPHATE mg
+let po4_mg = PHOSPHATE[g=mg,d=po4]
+let no3_mg = NITRATE[g=mg,d=no3]
+
+let nstar = no3-16*nutr+3
+let nstar_mg = no3_mg-16*po4_mg+3
+
+let sig = rho_un(salinity,temp-273.15,temp*0)-1000
+let sigxx = sig[Z=@WEQ:($sig)]
+let intgd = nstar*sigxx
+let nstar_xx = intgd[z=@sum]
+let intgd_z = z*sigxx
+let z_xx = intgd_z[z=@sum]
+
+let temp_mg = temperature[g=mg,d=temp]
+let salt_mg = salinity[g=mg,d=salt]
+let theta_mg = theta_fo(salt_mg,temp_mg,z+0*temp_mg,0)
+let sig_mg = rho_un(salt_mg,theta_mg,0)-1000
+let sigxx_mg = sig_mg[Z=@WEQ:($sig)]
+let intgd_mg = nstar_mg*sigxx_mg
+let nstar_xx_mg = intgd_mg[z=@sum]
+let intgd_z_mg = z*sigxx_mg
+let z_xx_mg = intgd_z_mg[z=@sum]
+
+set view 1
+ppl AXLSZE 0.0 0.16
+sha/nolab/($opt) nstar_xx_mg
+fill/o/nolab/($opt) nstar_xx_mg
+!con/nolab/o/lev=(0,6000,50) z_xx_mg
+sha/o/nolab/lev=(0)/pal=grey kmt[d=1]
+sha/o/nolab/lev=(0)/pal=white/x=47:100/y=40:50 kmt[d=1]
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.1` 0,0,0.2 "N^* on @SGs_Q@SR=($sig) isopycnal"
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.85` -1,0,0.2 "WOA01"
+
+
+set view 3
+ppl AXLSZE 0.16 0.16
+use 1
+sha/nolab/($opt) nstar_xx
+fill/o/nolab/($opt) nstar_xx
+!con/nolab/o/lev=(0,6000,50) z_xx
+sha/o/nolab/lev=(0)/pal=grey kmt[d=1]
+sha/o/nolab/lev=(0)/pal=white/x=47:100/y=40:50 kmt[d=1]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.85` -1,0,0.2 "Model"
+

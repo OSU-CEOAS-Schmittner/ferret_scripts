@@ -1,0 +1,59 @@
+!***********************************************************************
+! Description: plots MOBI's plankton functional groups
+!
+! use: go pl_mobi_pfts 1 l=3
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period obs e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+
+def sym dataset = $1%1%
+def sym tmod = $2%l=1%
+def sym lev = lev=(-inf)(0)(0.5)(1)(2)(5)(10)(20)(50)(100)(inf)
+go portraitNxN 2 3 90 30
+!set win/asp=0.9
+set reg/x=120:480/y=80s:80n
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+
+use ($dataset)
+set reg/x=30:390
+
+let no3mg = po4mg0+o_no3[z=0:50@ave,d=($dataset),($tmod)]*0 ! masking
+let p = o_phyt[k=1:2@ave,d=($dataset),($tmod)]*1e5
+
+set view 1
+shade/set/nolab/($lev) p
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) p
+sha/o/nolab/lev=(0)/pal=grey g_kmt[d=($dataset)]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Surface (0-120m) Biomass (10^-^5 mol N/m^3)"
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 Phyt
+
+set view 3
+
+let q = o_cocc[k=1:2@ave,d=($dataset),($tmod)]*1e5
+shade/set/nolab/($lev) q
+ppl shakey 1,1,0.16
+ppl AXLSZE 0.16 0.16
+ppl shade
+fill/nolab/o/($lev) q
+sha/o/nolab/lev=(0)/pal=grey g_kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 Cocc
+
+set view 5
+let q = o_diaz[k=1:2@ave,d=($dataset),($tmod)]*1e5
+shade/set/nolab/($lev) q
+ppl shakey 1,1,0.16
+ppl AXLSZE 0.16 0.16
+ppl shade
+fill/nolab/o/($lev) q
+sha/o/nolab/lev=(0)/pal=grey g_kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 Diaz
+
+can reg/x/y
+
+go regressxy

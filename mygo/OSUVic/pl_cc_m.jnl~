@@ -1,0 +1,76 @@
+!***********************************************************************
+! Description: plots monthly cloud cover
+! PUMA versus ISCCP climatology
+!
+! use: go pl_cc_m 1 l=7:9@ave l=7:9@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=1:12@ave or l=2
+!            : $3 : model time (averaging) period e.g. l=1:12@ave or l=2
+!            : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(0,100,10)
+def sym lev2 = lev=(-50,50,10)
+go portraitNxN 2 2 5 20
+set win/asp=0.8
+set reg/x=180:540
+!set axis/modulo xt
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal default
+
+use climatological_axes
+ca da climatological_axes
+
+use "/home/aschmitt/data/isccp/cld_mo_clim.cdf"
+let obs0 = cld[d=cld_mo_clim]*100
+
+let mod0 = tccm[d=($dataset)]*100		!  PUMA
+def grid/like=mod0/t=obs0 mg
+
+let obs = obs0[g=mg@ave,($otim)]
+let mod1 = mod0[($mtim)]
+let mod2 = mod1[gt=month_reg@mod]
+let mod = mod2[($otim)]
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl axlsze 0.,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) obs
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Cloud Cover"
+label/nouser `($ppl$xlen)*0.75` `($ppl$ylen)*0.8` 0,0,0.2 "ISCCP"
+
+
+set view 2
+shade/set/nolab/($lev)/nokey mod
+ppl axlsze .14,0
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) mod
+go land
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)
+
+set view 3
+let delta = mod - obs
+shade/set/nolab/($lev2)/pal=light_centered delta
+ppl shakey 1,1,0.16
+ppl axlsze .14,.14
+ppl shade
+fill/nolab/o/($lev2)/pal=light_centered delta
+go land
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 "Mod-Obs"
+
+set view 4
+pl/nolab/axes=0,1,0,1 obs[x=@ave], mod[x=@ave]
+
+go legline_nu 0.6 0.15 0.9 1 0.2 O
+go legline_nu 0.6 0.15 0.8 2 0.2 M

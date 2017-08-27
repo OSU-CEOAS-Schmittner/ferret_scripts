@@ -1,0 +1,41 @@
+!***********************************************************************
+! Description: plots O2 zonal averages for Model vs. 
+! observations
+!
+! use: go pl_o2_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_o2 ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "Dissolvedt Oxygen (mmol/m^3)"
+define symbol lev = lev=(-inf)(0,300,20)(inf)
+define symbol levc = lev=(0,400,40)(inf)
+pal orange_blue
+
+go pl_var_xav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

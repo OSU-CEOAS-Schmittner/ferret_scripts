@@ -1,0 +1,22 @@
+! calculates streamfunction for UVic model
+let rad = 6.371e6 ! Radius of Earth[m]
+let pi = acos(0)*2
+go set_ocean_rot v
+let v_xdin = v[x=@din] 
+let va_xdin = v_a[x=@din] 
+let vp_xdin = v_p[x=@din] 
+let vi_xdin = v_i[x=@din] 
+let vpi_xdin = v_pi[x=@din] 
+let vs_xdin = v_s[x=@din] 
+let cos_phi = cos(y*pi/180) + v_xdin - v_xdin
+let/title="Streamfunction Atlantic"/units="Sv" xi_a = (va_xdin[z=@iin]-va_xdin[z=@din])*1e-6*cos_phi
+let/title="Streamfunction Pacific"/units="Sv" xi_p = (vp_xdin[z=@iin]-vp_xdin[z=@din])*1e-6*cos_phi
+let/title="Streamfunction Indic"/units="Sv" xi_i = (vi_xdin[z=@iin]-vi_xdin[z=@din])*1e-6*cos_phi
+let/title="Streamfunction Pacific, Indic"/units="Sv" xi_pi = (vpi_xdin[z=@iin]-vpi_xdin[z=@din])*1e-6*cos_phi
+let/title="Streamfunction ACC"/units="Sv" xi_s = (vs_xdin[z=@iin]-vs_xdin[z=@din])*1e-6*cos_phi
+let/title="Global Streamfunction"/units="Sv" xi = (v_xdin[z=@iin]-v_xdin[z=@din])*1e-6*cos_phi
+let xi_zst = xi_a[gz=depth_stag]
+let xi_test = if (k eq 1) then 0 else xi_zst ! sets xi = 0 at surface
+
+define variable/units=Sv/title="Atlantic Overturning"  ov=xi_a[z=300:5000@max,y=0:90@max]
+

@@ -1,0 +1,56 @@
+! ---------------------------------------------------------------------------
+! Description: defines a set of varibles over the drainage basins of the 
+! world oceans
+!
+! Output     : Var_a       ->  Variable defined over Atlantic
+!            : Var_p       ->  Variable defined over Pacific 
+!            : Var_i       ->  Variable defined over Indic 
+!            : Var_s       ->  Variable defined over Southern Ocean
+!            : Var_o       ->  Variable defined over total Ocean
+!            : not working: Var_l       ->  Variable defined over land only
+!
+! author     : AS  01/98 [aschmi@climate.unibe.ch]             
+!
+! Usage      : GO set_ocean varibale_name   
+!         
+! arguments  : $1 : variable name            [MSL]
+!
+! ---------------------------------------------------------------------------
+! - clean up
+!CANCEL SYMBOL/ALL
+!CANCEL DATA/ALL
+! - define sympole var
+
+define symbol var = $1%MSL%
+
+SET DATA/SAVE
+
+! - set ocean index file
+! note old file has a problem with modulo
+
+set data basin_index_AS.cdf
+
+SET DATA/RESTORE
+
+! get correct grid
+
+define grid/like=($var)/t=basindx[d=basin_index_AS]/z=basindx[d=basin_index_AS] ($var)_grid
+!define grid/like=($var)/t=($var) ($var)_grid
+!define grid/like=($var) ($var)_grid
+
+! define several ocean and land parameter
+ 
+let/title="($var) Atlantic" ($var)_a = if( basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] gt 0.5 and basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] le 1.5) then ($var)
+
+let/title="($var) Pacific" ($var)_p = if( basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] gt 1.5 and basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] le 2.5) then ($var)
+
+let/title="($var) Indic" ($var)_i = if( basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] gt 2.5 and basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] le 3.5) then ($var)
+
+let/title="($var) Pacific and Indic" ($var)_pi = if( basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] gt 1.5 and basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] le 3.5) then ($var)
+
+let/title="($var) Southern Ocean" ($var)_s = if( basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] gt 3.5 and basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] le 4.5) then ($var)
+
+let/title="($var)" ($var)_o = if( basindx[k=1,l=1,d=basin_index_AS,g=($var)_grid] gt 0) then ($var)
+
+! go reg_NA
+SAY shade ($var)_a[k=1,l=1]

@@ -1,0 +1,54 @@
+! compares simulated profiles horizontally averaged in each basin
+! use: yes? use mydata.nc; set reg/l=10; go pl_var_xyav.jnl (dataset)
+
+go portraitNxN 2 5 99 55
+set win/asp=2.3
+
+ppl AXLSZE 0.16 0.16
+!ppl AXNMTC,1,0
+set view 1
+plot/axes=1,0,1,0/nolab/($opt) pmasked[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Global"
+ppl AXLSZE 0.0 0.16
+
+use ($dataset)
+plot/ov/nolab qmasked[x=@ave,y=@ave]
+
+go legline_zdown ($labx1), ($labxd), ($laby1), 1, .2, "Observations"
+go legline_zdown ($labx1), ($labxd), ($laby2), 2, .2, ($model)
+
+set view 3
+set reg/y=40s:90n
+plot/axes=1,0,1,0/nolab/($opt) pmasked_a[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Atlantic"
+
+use ($dataset)
+plot/ov/nolab qmasked_a[x=@ave,y=@ave]
+
+set view 5
+plot/axes=1,0,1,0/nolab/($opt) pmasked_i[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Indian"
+
+use ($dataset)
+plot/ov/nolab qmasked_i[x=@ave,y=@ave]
+
+set view 7
+plot/axes=1,0,1,0/nolab/($opt) pmasked_p[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Pacific"
+
+use ($dataset)
+plot/ov/nolab qmasked_p[x=@ave,y=@ave]
+
+ppl AXLSZE 0.16 0.16
+set view 9
+can reg/y
+plot/axes=1,1,1,0/nolab/($opt) pmasked_s[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Southern Ocean"
+
+use ($dataset)
+plot/ov/nolab qmasked_s[x=@ave,y=@ave]
+
+
+
+
+

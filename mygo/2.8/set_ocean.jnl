@@ -1,0 +1,35 @@
+! ---------------------------------------------------------------------------
+! Description: defines a set of varibles over the individual basins of the 
+! world oceans for UVic model output
+!
+! Output     : Var_a       ->  Variable defined over Atlantic
+!            : Var_p       ->  Variable defined over Pacific 
+!            : Var_i       ->  Variable defined over Indic 
+!            : Var_s       ->  Variable defined over Southern Ocean
+!            : not working: Var_l       ->  Variable defined over land only
+!
+! author     : AS  01/04 [aschmi@climate.unibe.ch]             
+!
+! Usage      : GO set_ocean variable_name   
+!         
+! arguments  : $1 : variable name            [MSL]
+!
+! ---------------------------------------------------------------------------
+
+define symbol var = $1%MSL%
+define symbol mask1 = $2%MSKHR%
+let mask = ($mask1)
+
+let/title="($var) Atlantic" ($var)_a = if MASK[g=($var)@nrst] eq 1 then ($var)
+
+let/title="($var) Pacific" ($var)_p = if MASK[g=($var)@nrst] eq 2 then ($var)
+
+let/title="($var) Indic" ($var)_i = if MASK[g=($var)@nrst] eq 3 then ($var)
+
+let/title="($var) Pacific and Indic" ($var)_pi = if ((MASK[g=($var)@nrst] eq 2) or (MASK[g=($var)@nrst] eq 3)) then ($var)
+
+let/title="($var) Southern Ocean" ($var)_s = ($var)[y=90s:40s]
+
+! go reg_NA
+SAY shade ($var)_a[k=1,l=1]
+

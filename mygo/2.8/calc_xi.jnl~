@@ -1,0 +1,26 @@
+! calculates streamfunction for UVic model
+let v_xdin = v[x=@din] 
+let va = if MSKHR[g=v] eq 1 then v 
+let vp = if MSKHR[g=v] eq 2 then v
+let vi = if MSKHR[g=v] eq 3 then v
+let vpi = if ((MSKHR[g=v] eq 2) or (MSKHR[g=v] eq 3)) then v
+let va_xdin = va[x=@din] 
+let vp_xdin = vp[x=@din]
+let vi_xdin = vi[x=@din]
+let vpi_xdin = vpi[x=@din]
+let vs_xdin = if y lt 35 then v[x=@din]
+let/title="Streamfunction Atlantic"/units="Sv" xi_a = (va_xdin[z=@iin]-va_xdin[z=@din])*1e-6
+let/title="Streamfunction Pacific"/units="Sv" xi_p = (vp_xdin[z=@iin]-vp_xdin[z=@din])*1e-6
+let/title="Streamfunction Indic"/units="Sv" xi_i = (vi_xdin[z=@iin]-vi_xdin[z=@din])*1e-6
+let/title="Streamfunction Pacific, Indic"/units="Sv" xi_pi = (vpi_xdin[z=@iin]-vpi_xdin[z=@din])*1e-6
+let/title="Streamfunction ACC"/units="Sv" xi_s = (vs_xdin[z=@iin]-vs_xdin[z=@din])*1e-6
+let/title="Global Streamfunction"/units="Sv" xi = (v_xdin[z=@iin]-v_xdin[z=@din])*1e-6
+let xi_zst = xi_a[gz=depth_stag]
+let xi_test = if (k eq 1) then 0 else xi_zst ! sets xi = 0 at surface
+
+define variable/units=Sv/title="Atlantic Overturning"  ov=xi_a[z=300:5000@max,y=0:90@max]
+define variable/units=Sv/title="Indonesian Throughflow"  ITF=u[x=119e,y=20s:2s@din,z=0:6000@din]*(-1e-6)
+define variable/units=Sv/title="Antarctic Circumpolar Current" ACC = u[x=68w,y=70s:50s@din,z=0:6000@din]*1e-6
+define variable/units=Sv/title="Southern Ocean Upwelling" SOU = xi_tot[y=90s:35s@max,z=300:5000@max]
+
+

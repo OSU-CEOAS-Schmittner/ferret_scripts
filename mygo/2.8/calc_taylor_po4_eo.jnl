@@ -1,0 +1,22 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+let nutrm = phosphate[d=($dataset),($tim)]*1000
+go set_ocean nutrm
+
+use "/raid1/aschmitt/data/woa01/po4.cdf"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=phosphate[d=($dataset)]/t=PHOSPHATE mg
+let po4_mg = PHOSPHATE[g=mg,d=po4]
+go set_ocean po4_mg mskhr[d=($dataset)]
+!let po4_mg_a = po4_mg[y=40s:90n,d=po4]*nutrm_a[y=40s:90n,d=1]/nutrm_a[y=40s:90n,d=1]
+!let po4_mg_p = po4_mg[y=40s:90n,d=po4]*nutrm_p[y=40s:90n,d=1]/nutrm_p[y=40s:90n,d=1]
+!let po4_mg_i = po4_mg[y=40s:90n,d=po4]*nutrm_i[y=40s:90n,d=1]/nutrm_i[y=40s:90n,d=1]
+!let po4_mg_s = po4_mg[d=po4,y=90s:40s]
+
+use ($dataset)
+let p = po4_mg[d=po4]
+let q = nutrm
+! perr = error of obs + model error
+let perr = 0.4
+go regressxyz2

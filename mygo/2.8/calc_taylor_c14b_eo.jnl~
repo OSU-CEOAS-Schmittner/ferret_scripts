@@ -1,0 +1,22 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let c14m = dc14[d=($dataset),($tim)]
+go set_ocean c14m
+
+use "/raid1/aschmitt/data/glodap/c14.nc"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dc14[d=($dataset)]/t=c14 mg
+let c14_mg = c14[g=mg,d=c14]
+go set_ocean c14_mg mskhr[d=($dataset)]
+let error_mg = c14_err[g=mg,d=c14]
+let dpe_mg = c14_mg + error_mg
+let dme_mg = c14_mg - error_mg
+go set_ocean dpe_mg mskhr[d=($dataset)]
+go set_ocean dme_mg mskhr[d=($dataset)]
+
+let p = c14_mg
+let q = c14m
+let perr = error_mg
+go regressxyz

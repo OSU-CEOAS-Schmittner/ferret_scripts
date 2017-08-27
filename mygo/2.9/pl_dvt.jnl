@@ -1,0 +1,63 @@
+! plots dominant vegetation type
+! use: go pl_dvt 1 l=2:4@ave
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+go portraitNxN 2 2 95 17
+let dvt1 = if l_vegfra[k=1] eq l_vegfra[k=@max] then l_soilresp*0+1
+let dvt2 = if l_vegfra[k=2] eq l_vegfra[k=@max] then l_soilresp*0+2 else dvt1
+let dvt3 = if l_vegfra[k=3] eq l_vegfra[k=@max] then l_soilresp*0+3 else dvt2
+let dvt4 = if l_vegfra[k=4] eq l_vegfra[k=@max] then l_soilresp*0+4 else dvt3
+let dvt5 = if l_vegfra[k=5] eq l_vegfra[k=@max] then l_soilresp*0+5 else dvt4
+let dvt6 = if l_vegfra[k=6] eq l_vegfra[k=@max] then l_soilresp*0+6 else dvt5
+let land = if g_mskt eq 0 then 1
+let landice = l_icefra
+let dvt = if landice gt 0. then landice*0+7 else dvt6
+
+set view 1
+use ($dataset)
+pal veg
+PPL DFLTFNT DR
+ppl AXLSZE 0. 0.16
+sha/nolab/lev=(1,8,1) dvt[($tim)]
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.05` 0,0,0.2 "DOMINANT VEGETATION TYPE"
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.05` -1,0,0.2 "MODEL"
+!ppl shade
+
+set view 3
+use "/home/aschmitt/data/igbp_vegetation/frac_igbp.cdf"
+def grid/like=btree/z=l_vegfra[d=($dataset)] ngr
+let dummy = if l_vegfra[d=($dataset),g=ngr] then 1 else 1 ! define dummy variable on new grid
+let fraco1 = if k eq 1 then dummy*0+btree
+let fraco2 = if k eq 2 then dummy*0+ntree else fraco1
+let fraco3 = if k eq 3 then dummy*0+c3g else fraco2
+let fraco4 = if k eq 4 then dummy*0+c4g else fraco3
+let fraco5 = if k eq 5 then dummy*0+shrub else fraco4
+let fraco6 = if k eq 6 then dummy*0+soil+URBAN_AND_WATER else fraco5
+let fraco = if fraco6 gt 0 then fraco6
+
+let dvto1 = if fraco[k=1] eq fraco[k=@max] then BTREE*0+1
+let dvto2 = if fraco[k=2] eq fraco[k=@max] then BTREE*0+2 else dvto1
+let dvto3 = if fraco[k=3] eq fraco[k=@max] then BTREE*0+3 else dvto2
+let dvto4 = if fraco[k=4] eq fraco[k=@max] then BTREE*0+4 else dvto3
+let dvto5 = if fraco[k=5] eq fraco[k=@max] then BTREE*0+5 else dvto4
+let dvto6 = if fraco[k=6] eq fraco[k=@max] then BTREE*0+6 else dvto5
+let dvto = if ice gt 0 then BTREE*0+7 else dvto6
+
+ppl AXLSZE 0.16 0.16
+sha/nolab/lev=(1,8,1) dvto[($tim)]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.05` -1,0,0.2 "Observations"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.13` -1,-90,0.1 "B Tree"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.27` -1,-90,0.1 "N Tree"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.41` -1,-90,0.1 "C3 Gra"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.55` -1,-90,0.1 "C4 Gra"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.69` -1,-90,0.1 "Shrub"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.83` -1,-90,0.1 "Soil"
+label/nouser `($ppl$xlen)*1.05` `($ppl$ylen)*.97` -1,-90,0.1 "Ice"
+
+
+let dvto_mg = dvto[g=l_vegfra[d=($dataset)]]
+let match = if dvto_mg eq dvt[d=($dataset),($tim)] then 1 else 0
+let total = if dvto_mg eq dvt[d=($dataset),($tim)] then 1 else 1
+list match[x=@sum,y=@sum]/total[x=@sum,y=@sum]*100

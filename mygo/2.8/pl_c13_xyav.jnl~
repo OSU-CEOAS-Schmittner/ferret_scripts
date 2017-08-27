@@ -1,0 +1,87 @@
+! compares simulated radio carbon profiles horizontally averaged in each basin
+! use: yes? use mydata.nc; set reg/l=10; go pl_dic_xyav.jnl #dataset
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+go portraitNxN 2 5 7 55
+go calc_taylor_c13 ($dataset) ($tim)
+
+ppl AXLSZE 0.16 0.16
+!ppl AXNMTC,1,0
+set view 1
+plot/axes=1,0,1,0/nolab/hlim=-1:2:.5/thick=2 pmasked[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Global"
+ppl AXLSZE 0.0 0.16
+let pmax = pmasked[x=@var,y=@var]^0.5
+let pmin = pmasked[x=@var,y=@var]^0.5
+let dpe_mg = pmasked[x=@ave,y=@ave]+pmax
+let dme_mg = pmasked[x=@ave,y=@ave]-pmin
+plot/ov/nolab/li=1 dpe_mg
+plot/ov/nolab/li=1 dme_mg
+
+use ($dataset)
+plot/ov/nolab/col=red/thick=2 qmasked[x=@ave,y=@ave]
+
+go legline_zdown .7, .6, 1500, 1, .2, "Observations"
+go legline_zdown .7, .6, 2500, 2, .2, "Model"
+
+set view 3
+set reg/y=40s:90n
+plot/axes=1,0,1,0/nolab/hlim=-1:2:.5/thick=2 pmasked_a[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Atlantic"
+let pmax = pmasked_a[x=@var,y=@var]^0.5
+let pmin = pmasked_a[x=@var,y=@var]^0.5
+let dpe_mg = pmasked_a[x=@ave,y=@ave]+pmax
+let dme_mg = pmasked_a[x=@ave,y=@ave]-pmin
+plot/ov/nolab/li=1 dpe_mg
+plot/ov/nolab/li=1 dme_mg
+
+use ($dataset)
+plot/ov/nolab/col=red/thick=2 qmasked_a[x=@ave,y=@ave]
+
+set view 5
+plot/axes=1,0,1,0/nolab/hlim=-1:2:.5/thick=2 pmasked_i[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Indian"
+let pmax = pmasked_i[x=@var,y=@var]^0.5
+let pmin = pmasked_i[x=@var,y=@var]^0.5
+let dpe_mg = pmasked_i[x=@ave,y=@ave]+pmax
+let dme_mg = pmasked_i[x=@ave,y=@ave]-pmin
+plot/ov/nolab/li=1 dpe_mg
+plot/ov/nolab/li=1 dme_mg
+
+use ($dataset)
+plot/ov/nolab/col=red/thick=2 qmasked_i[x=@ave,y=@ave]
+
+set view 7
+plot/axes=1,0,1,0/nolab/hlim=-1:2:.5/thick=2 pmasked_p[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Pacific"
+let pmax = pmasked_p[x=@var,y=@var]^0.5
+let pmin = pmasked_p[x=@var,y=@var]^0.5
+let dpe_mg = pmasked_p[x=@ave,y=@ave]+pmax
+let dme_mg = pmasked_p[x=@ave,y=@ave]-pmin
+plot/ov/nolab/li=1 dpe_mg
+plot/ov/nolab/li=1 dme_mg
+
+use ($dataset)
+plot/ov/nolab/col=red/thick=2 qmasked_p[x=@ave,y=@ave]
+
+ppl AXLSZE 0.16 0.16
+set view 9
+can reg/y
+plot/axes=1,1,1,0/nolab/hlim=-1:2:.5/thick=2 pmasked_s[x=@ave,y=@ave]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.1` -1,0,0.2 "Southern Ocean"
+let pmax = pmasked_s[x=@var,y=@var]^0.5
+let pmin = pmasked_s[x=@var,y=@var]^0.5
+let dpe_mg = pmasked_s[x=@ave,y=@ave]+pmax
+let dme_mg = pmasked_s[x=@ave,y=@ave]-pmin
+plot/ov/nolab/li=1 dpe_mg
+plot/ov/nolab/li=1 dme_mg
+
+use ($dataset)
+plot/ov/nolab/col=red/thick=2 qmasked_s[x=@ave,y=@ave]
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 "C13 (permil)"
+
+
+
+
+

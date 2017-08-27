@@ -1,0 +1,26 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+let o2m = o2[d=($dataset),($tim)]*1000
+go set_ocean o2m
+
+use "/raid1/aschmitt/data/woa01/o2.cdf"
+!           Convert from ml/l to mmol/m^3
+
+set axis/depth zt
+set axis/modulo xt
+let o2_lev = o2[d=o2]/22391.6*1e6 ! mmol/m^3
+define grid/like=o2m[d=($dataset)]/t=o2_lev mg
+let o2_mg = o2_lev[g=mg]
+go set_ocean o2_mg mskhr[d=($dataset)]
+
+let p = o2_mg[d=o2]
+let q = o2m
+go regressxyz
+
+let one = if o2m lt 5 then 1
+let one_lev = if o2_lev lt 5 then 1
+let o2_min_vol = one[x=@din,y=@din,z=@din]*1e-14
+let o2_min_vol_lev = one_lev[x=@din,y=@din,z=@din]*1e-14
+list o2_min_vol,o2_min_vol_lev
+

@@ -1,0 +1,79 @@
+!***********************************************************************
+! Description: plots mesozooplankton carbon biomass for Model vs. 
+! observations from O'Brien (COPEPOD database)
+!
+! use: go pl_mzcb 1 l=1:12@ave 1 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period obs e.g. l=1:12@ave or l=2
+!            : $3 : time (averaging) period model
+!            : $4 : model acromym
+!
+!***********************************************************************
+
+def sym dataset = $1%1%
+def sym tobs = $2%l=1%
+def sym tmod = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(0,50,2)(inf)
+go portraitNxN 2 3 90 30
+!set win/asp=0.9
+set reg/x=120:480
+set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal centered
+pal blue_darkred
+pal default
+
+use "/home/aschmitt/data/copepod/cmass-2005/cmass_ann.nc"
+!use "/home/aschmitt/data/copepod/cmass-2005/cmass_JJA.nc"
+!use "/home/aschmitt/data/copepod/cmass-2005/cmass_MAM.nc"
+!use "/home/aschmitt/data/copepod/cmass-2005/cmass_SON.nc"
+
+use ($dataset)
+set reg/x=30:390
+
+def grid/x=phyt[d=($dataset)]/y=phyt[d=($dataset)] mg
+
+let zoopm = zoop*redctn*12*1000
+let redctn = 7
+
+let p = mzcb[d=cmass_ann.nc,g=mg@ave]
+let q = zoopm[z=0:200@ave,d=($dataset),($tmod)]*0.3
+go regressxy
+
+set view 1
+shade/set/nolab/($lev) pmasked
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) pmasked
+sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Phytoplankton carbon biomass (mg C m^-^3)"
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 "OBS"
+
+set view 3
+
+shade/set/nolab/($lev) qmasked
+ppl shakey 1,1,0.16
+ppl AXLSZE 0. 0.16
+ppl shade
+fill/nolab/o/($lev) qmasked
+sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.03` `($ppl$ylen)*0.75` -1,0,0.2 ($model)
+
+set view 5
+pl/set/nolab/vlim=0:50/thick=3 pmasked[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+!ppl ylab Sea-Air CO_2 Flux (mol m^-^2 yr^-^1)
+ppl yfor (i2)
+ppl plot
+pl/nolab/o/li/col=red/thick=3 qmasked[x=@ave]
+pl/o/nolab/vs/thick=3/li/col=black {-20,0},{45,45}; label -45 45  -1,0,0.2 "OBS"
+pl/o/nolab/vs/li/col=red/thick=3 {-20,0},{40,40}; label -45 40  -1,0,0.2 "MODEL"
+
+can reg/x
+
+go regressxy

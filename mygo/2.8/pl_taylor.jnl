@@ -1,0 +1,32 @@
+! go calc_no3_stat ! calculates xx and yy as points in the Taylor diagram
+! 
+can mo logo
+define axis/x=0:1.5:0.01 xax
+define axis/t=0:1.5:0.01 yax
+define grid/x=xax/y=yax mygrid
+let yyy1 = x[g=mygrid]*tan(acos(rrr))
+let yyy = if (x[g=mygrid]^2+yyy1^2)^0.5 le 1.4 then yyy1
+let pi = asin(1)*2
+
+! isolines of pattern RMS error
+let rmss = if (x[g=mygrid]^2+y[g=mygrid]^2)^0.5 le 1.3 then ((x[g=mygrid]-1)^2 + y[g=mygrid]^2)^0.5
+con/set/AXES=0,1,1,0/hlim=0:1.4/vlim=0:1.4/nolab/color=1 rmss
+ppl xlab "Standard Deviation"
+ppl ylab "Standard Deviation"
+ppl contour
+
+! isolines of standard deviation
+let stdd = if (x[g=mygrid]^2+y[g=mygrid]^2)^0.5 le 1.4 then (x[g=mygrid]^2 + y[g=mygrid]^2)^0.5
+con/ov/nolab/pen=1/lev=(0,1.3,0.2) stdd
+label 1.05, 1.05, 0, -45, 0.12 "Correlation Coefficient"
+
+let rrr = 0.3; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.5; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.6; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.7; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.8; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.9; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.95; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+let rrr = 0.99; plot/nolab/ov/vs/line=1 x[g=mygrid],yyy; go taylor_label2
+
+

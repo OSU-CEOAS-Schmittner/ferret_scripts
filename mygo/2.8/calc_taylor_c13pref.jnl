@@ -1,0 +1,64 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+set mem/size=30
+
+!let rstd = 0.0112372
+let rstd = 1.
+let rdic = dic13/dic
+let ddic = (rdic/rstd-1)*1000
+
+let c13m = ddic[d=($dataset),($tim)]
+go set_ocean c13m
+
+let o2m = oxygen
+let tempm = temperature
+let aou1 = (o2sat(tempm-273.15,salinity)-o2m)*1000
+let aoum = aou1[d=($dataset),($tim)]
+go set_ocean aoum
+
+use "/home/aschmitt/data/c13/d13c.nc"
+
+!set axis/modulo xax5
+set axis/depth zt
+set axis/modulo xt
+define grid/like=dic13[d=($dataset)]/t=dc13 mg
+let c13_mg = dc13[g=mg@ave,d=d13c]
+go set_ocean c13_mg mskhr[d=($dataset)]
+
+let aou_mg = aou[g=mg@ave,d=d13c]
+go set_ocean aou_mg mskhr[d=($dataset)]
+
+let sig0_mg = sig0[g=mg@ave,d=d13c]
+go set_ocean sig0_mg mskhr[d=($dataset)]
+
+let sig2_mg = sig2[g=mg@ave,d=d13c]
+go set_ocean sig2_mg mskhr[d=($dataset)]
+
+let sig4_mg = sig4[g=mg@ave,d=d13c]
+go set_ocean sig4_mg mskhr[d=($dataset)]
+
+let temp_mg = temp[g=mg@ave,d=d13c]
+go set_ocean temp_mg mskhr[d=($dataset)]
+
+let salt_mg = salt[g=mg@ave,d=d13c]
+go set_ocean salt_mg mskhr[d=($dataset)]
+
+let dic_mg = dic[g=mg@ave,d=d13c]
+go set_ocean dic_mg mskhr[d=($dataset)]
+
+let alk_mg = alk[g=mg@ave,d=d13c]
+go set_ocean alk_mg mskhr[d=($dataset)]
+
+let aco2_mg = aco2[g=mg@ave,d=d13c]
+go set_ocean aco2_mg mskhr[d=($dataset)]
+
+let dc14_mg = dc14[g=mg@ave,d=d13c]
+go set_ocean dc14_mg mskhr[d=($dataset)]
+
+use "/home/aschmitt/data/c13/nutr.nc"
+
+let po4_mg = po4[g=mg@ave,d=nutr]
+go set_ocean po4_mg mskhr[d=($dataset)]
+
+

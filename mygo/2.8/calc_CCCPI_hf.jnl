@@ -1,0 +1,25 @@
+! calculate CCCPI for historic forcing runs
+set mem/size=30
+def symbol dataset = $1%1%
+def symbol twoa = $2%l=1%
+def symbol tglodap = $3%l=1%
+go calc_taylor_c14b_eo ($dataset) ($tglodap)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat r,stdr,rms
+go calc_taylor_po4_eo ($dataset) ($twoa)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_no3_eo ($dataset) ($twoa)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_aou_eo ($dataset) ($twoa)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_temp_eo ($dataset) ($twoa)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_salt_eo ($dataset) ($twoa)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_dic_eo ($dataset) ($tglodap)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_alk_eo ($dataset) ($tglodap)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_cfc11_eo ($dataset) ($tglodap)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms
+go calc_taylor_flux_carbon_eo ($dataset) ($tglodap)
+list/form=(4f7.4)/nohead/file=CCCPI_hf.dat/append r,stdr,rms

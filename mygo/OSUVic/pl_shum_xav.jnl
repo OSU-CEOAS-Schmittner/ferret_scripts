@@ -1,0 +1,72 @@
+!***********************************************************************
+! Description: plots specific humidity zonally averaged
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_shum_xav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=1:12@ave or l=2
+!            : $3 : time (averaging) period e.g. l=1:12@ave or l=2
+!	     : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tio = $2%l=1%
+def symbol tim = $3%l=1%
+def sym model = $4%MODEL%
+def sym lev = lev=(0,20,2)
+def sym lev1 = lev=(0,20,4)
+def sym lev2 = lev=(-inf)(-4,4,0.5)(inf)
+def sym lev3 = lev=(-5,5,1)
+go portraitNxN 2 3 95 38
+def view/xlim=0:0.98/ylim=0.52:1/text=.9 1
+def view/xlim=0:0.98/ylim=0.26:0.74/text=.9 3
+def view/xlim=0:0.98/ylim=0.:0.48/text=.9 5
+!set win/asp=0.9
+set reg/x=180:540/z=310:1000/y=85s:85n
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal blue_orange
+
+use "/home/aschmitt/data/ncep/pressure/shum.mon.ltm.nc"
+def grid/like=q[d=($dataset)]/t=shum mg
+let mod1 = q[($tim),d=($dataset)]*1000
+let mod = mod1[x=@ave]
+let obs1 = shum[g=mg,($tio)]
+let obs = obs1[x=@ave]
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl shakey 1,1,0.16
+ppl axlsze 0,.14
+ppl shade
+fill/nolab/o/($lev) obs
+con/nolab/o/($lev1)/size=.12/sigdig=1 obs
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Specific Humidity (g/kg)"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.91` 1,0,0.2 "NCEP"
+
+set view 3
+shade/set/nolab/($lev) mod
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) mod
+con/nolab/o/($lev1)/size=0.12 mod
+go land
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.91` 1,0,0.2 ($model)
+
+set view 5
+shade/set/nolab/($lev2)/pal=light_centered mod-obs
+ppl axlsze .14,.14
+ppl shakey 1,1,0.16
+ppl xlab LATITUDE
+ppl ylab Z (hPa)
+ppl shade
+fill/nolab/o/($lev2)/pal=light_centered mod-obs
+con/nolab/o/($lev3)/size=.12 mod-obs
+go land
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.91` 1,0,0.2 MODEL-NCEP

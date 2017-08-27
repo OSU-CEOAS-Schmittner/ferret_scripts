@@ -1,0 +1,29 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+!let RHO = RHO_UN(SALINITY,TEMP-273.15,0*TEMP/TEMP)
+let RHO = 1024.5 ! value used in co2calc.f
+let sbar = 34.9
+!let alk2 = alk[($tim)]*salinity[($tim)]/sbar ! normalize by salinity
+let palk = (o_alk+o_no3)*35/o_sal
+let palk2 = palk[($tim),d=($dataset)]
+let/title="Potential Alkalinity"/units="umol/kg" palk1 = palk2/rho*1e6 ! convert from mol/m^3 to umol/kg
+go set_ocean palk1
+
+use "/home/aschmitt/data/glodap/POTALK.nc"
+set axis/depth depth
+set axis/modulo longitude
+define grid/like=palk[d=($dataset)]/t=potalk mg
+let palk_mg = potalk[g=mg,d=POTALK]
+go set_ocean palk_mg g_mskhr[d=($dataset)]
+let error_mg = potalk_err[g=mg,d=POTALK]
+let dpe_mg = palk_mg + error_mg
+let dme_mg = palk_mg - error_mg
+go set_ocean dpe_mg g_mskhr[d=($dataset)]
+go set_ocean dme_mg g_mskhr[d=($dataset)]
+
+use ($dataset)
+let p = palk_mg
+let q = palk1
+go regressxyz
+go set_ocean pmasked g_mskhr[d=($dataset)]
+go set_ocean qmasked g_mskhr[d=($dataset)]

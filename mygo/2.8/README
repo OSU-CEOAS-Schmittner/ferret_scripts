@@ -1,0 +1,29 @@
+Oct 20, 2006
+Author: andreas schmittner aschmitt@coas.oregonstate.edu
+
+This directory contains ferret scripts useful for comparison
+of UVic model output to observations. 
+
+It requires the observation data files. You need to edit the
+paths to the directory which contains these data. 
+
+The use is simple:
+1) load your model data file: e.g. 
+	yes? use tavg.01234.01.01.nc
+2) set region: e.g.
+	yes? set reg/l=7
+3) call script
+	yes? go pl_po4_xyav_2.8 1 l=7
+
+Some scripts require arguments. See description in the
+scripts. Some scripts work only for particular model
+versions (see _2.8 or _2.7 ending). This labeling
+might not be consistent for all scripts.
+
+Files called pl_var_xyav plot basin wide vertical profies of variable var e.g. pl_temp_xyav plots potential temperature profiles.
+Files called pl_var_sec plot meridional sections.
+	     pl_var_xav plot zonal averages.
+	     pl_varsfc_xav plot zonal averages of surface values.
+
+
+

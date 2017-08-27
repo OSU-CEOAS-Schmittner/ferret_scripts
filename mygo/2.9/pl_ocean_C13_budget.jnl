@@ -1,0 +1,30 @@
+! plots whole ocean C budget
+! use: 
+! 1. load tsi file (e.g. "use tsi.00001.01.01.nc")
+! 2. check that the constants used below (e.g.ocean_volume, redptn) 
+! are consistent with your model run
+! 3. run script: yes? go pl_ocean_C_budget
+!
+
+let ocean_volume = 1.35769e18 ! [m]
+let cdic13 = o_dic13*ocean_volume*12*1e-15 
+let/units="PgC"/title="DIC13 Change" dcdic13 = cdic13-cdic13[l=1] 
+
+let redctn=6.625
+let corg13 = (o_phytc13+o_diazc13+o_zoopc13+o_detrc13)*ocean_volume*12*1e-15
+let/units="PgC"/title="C13_{org} Change" dcorg13 = corg13-corg13[l=1]
+
+let redntp = 16.
+let redctp = redctn*redntp
+let cdoc13 = o_doc13*ocean_volume*12*1e-15
+let/units="PgC"/title="DOC13 Change" dcdoc13 = cdoc13-cdoc13[l=1]
+
+let/units="PgC"/title="Total Ocean C13" ocarb13 = cdic13+corg13+cdoc13
+let/units="PgC"/title="Total Ocean C13 Change" docarb13 = ocarb13-ocarb13[l=1]
+
+let ocean_sfc_area = 3.56684e14
+let/units="PgC/s"/title="Ocean C13 Flux" ocflx13 = f_dic13*ocean_sfc_area*12*1e-15
+let/units="PgC"/title="Integrated Ocean C Flux" ocflxin13 = ocflx13[t=@iin]
+
+pl ocflxin13, docarb13, dcdic13, dcorg13, dcdoc13
+

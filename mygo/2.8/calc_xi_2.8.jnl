@@ -1,0 +1,44 @@
+! calculates streamfunction for UVic model
+! arguments: $1: time averaging period e.g. l=@sbx:12
+define symbol tav = $1%l=@ave%
+let vv = v[($tav)]
+let va = if MSKHR[g=v] eq 1 then vv 
+let vp = if MSKHR[g=v] eq 2 then vv
+let vi = if MSKHR[g=v] eq 3 then vv
+let vpi = if ((MSKHR[g=v] eq 2) or (MSKHR[g=v] eq 3)) then vv
+! zonal integration
+let v_xdin = vv[x=@din] 
+let va_xdin = va[x=@din] 
+let vp_xdin = vp[x=@din]
+let vi_xdin = vi[x=@din]
+let vpi_xdin = vpi[x=@din]
+let vs_xdin = if y lt 35 then vv[x=@din]
+! vertical integration, subtracting the definite integral (@din) leads to
+! zero values at the bottom (integration from bottom to top)
+let/title="Streamfunction Atlantic"/units="Sv" xi_a = (va_xdin[z=@iin]-va_xdin[z=@din])*1e-6
+let/title="Streamfunction Pacific"/units="Sv" xi_p = (vp_xdin[z=@iin]-vp_xdin[z=@din])*1e-6
+let/title="Streamfunction Indic"/units="Sv" xi_i = (vi_xdin[z=@iin]-vi_xdin[z=@din])*1e-6
+let/title="Streamfunction Pacific, Indian"/units="Sv" xi_pi = (vpi_xdin[z=@iin]-vpi_xdin[z=@din])*1e-6
+let/title="Streamfunction ACC"/units="Sv" xi_s = (vs_xdin[z=@iin]-vs_xdin[z=@din])*1e-6
+let/title="Global Streamfunction"/units="Sv" xi = (v_xdin[z=@iin]-v_xdin[z=@din])*1e-6
+let xi_zst = xi_a[gz=depth_stag]
+let xi_test = if (k eq 1) then 0 else xi_zst ! sets xi = 0 at surface
+
+let/units=Sv/title="Atlantic Overturning at 25N" amoc25 = xi_a[z=300:5000@max,y=25]
+let/units=Sv/title="Atlantic Overturning at 32S" amoc32s = xi_a[z=300:5000@max,y=32s]
+let/units=Sv/title="Maximum Atlantic Overturning"  ov=xi_a[z=300:5000@max,y=0:90@max]
+let/units=Sv/title="Indonesian Throughflow"  ITF=u[x=119e,y=20s:2s@din,z=0:6000@din]*(-1e-6)
+let/units=Sv/title="Antarctic Circumpolar Current" ACC = u[x=68w,y=70s:50s@din,z=0:6000@din]*1e-6
+!let/units=Sv/title="Southern Ocean Upwelling" SOU = xi_tot[y=90s:35s@max,z=300:5000@max]
+let/units=Sv/title="Antarctic Bottom Water" AABW = xi[y=35s@min,z=1000:7000@min]
+let/units=Sv/title="Antarctic Bottom Water Flow Into Atlantic" AABWA = xi_a[y=35s@min,z=1000:7000@min]
+let/units=Sv/title="Circumpolar Deep Water Flow Into Pacific/Indian at 35S" CPDWPI35s = xi_pi[y=35s@min,z=1000:7000@min]
+let/units=Sv/title="Circumpolar Deep Water Flow Into Pacific/Indian at 20S" CPDWPI20s = xi_pi[y=20s@min,z=1000:7000@min]
+let/units=Sv/title="Circumpolar Deep Water Flow Into Pacific/Indian at Equator" CPDWPIEQ = xi_pi[y=0s@min,z=1000:7000@min]
+let/units=Sv/title="Circumpolar Deep Water Flow Into Indian at 20S" cpdwi20s = XI_i[y=20s@min,z=1000:7000@min]
+let/units=Sv/title="Circumpolar Deep Water Flow Into Indian at 32S" cpdwi32s = XI_i[y=32s@min,z=1000:7000@min]
+let/units=Sv/title="Circumpolar Deep Water Flow Into Pacific at 32S" cpdwp32s = XI_p[y=32s@min,z=1000:7000@min]
+
+let/units=Sv/title="Global Upper Cell (NADW)" gl_md = xi[y=0:90@max,z=400:7000@max]
+let/units=Sv/title="Global Deep Cell (AABW)" gl_ld = xi[y=90s:90n@min,z=1500:7000@min]
+

@@ -1,0 +1,100 @@
+!***********************************************************************
+! Description: plots salinity difference between UVic and Levitus
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+
+define symbol tav = $1%l=1%
+set axis/depth zt
+set data/save
+use lev_annual
+go portraitNxN 2 4 10 25
+set data/restore
+define grid/like=temp/t=temp[d=lev_annual] mg
+let salt_mg = salt[g=mg,d=lev_annual]
+let dsalt = salinity[($tav)]-salt_mg
+go set_ocean dsalt
+set view 1
+define symbol lev = (-2,2,0.1)
+shade/nolabels/y=-90:90/set/pal=light_centered/lev=($lev) dsalt[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/o/nolab/pal=light_centered/lev=($lev) dsalt[x=@ave]
+con/o/nolab/pal=light_centered/lev=($lev) dsalt[x=@ave]
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt[x=@ave],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.27` 0,0,0.2 "SALINITY MODEL minus LEVITUS"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "WORLD OCEAN"
+ppl shaset reset
+
+! ATLANTIC
+
+set view 3
+shade/nolabels/y=-35:80/set/pal=light_centered/lev=($lev)/nokey dsalt_a[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/o/nolab/pal=light_centered/lev=($lev) dsalt_a[x=@ave]
+con/o/nolab/pal=light_centered/lev=($lev) dsalt_a[x=@ave]
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt_a[x=@ave],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "ATLANTIC"
+ppl shaset reset
+
+! PACIFIC
+
+set view 5
+shade/nolabels/y=-35:65/set/pal=light_centered/lev=($lev)/nokey dsalt_p[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+fill/o/nolab/pal=light_centered/lev=($lev) dsalt_p[x=@ave]
+con/o/nolab/pal=light_centered/lev=($lev) dsalt_p[x=@ave]
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt_p[x=@ave],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "PACIFIC"
+ppl shaset reset
+
+! INDIAN
+
+set view 7
+shade/nolabels/y=-35:20/set/pal=light_centered/lev=($lev)/nokey dsalt_i[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(dsalt_i[x=@ave],-99)
+fill/o/nolab/pal=light_centered/lev=($lev) dsalt_i[x=@ave]
+con/o/nolab/pal=light_centered/lev=($lev) dsalt_i[x=@ave]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "INDIAN OCEAN"
+ppl shaset reset
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

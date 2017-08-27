@@ -1,0 +1,28 @@
+!***********************************************************************
+! Description: plots radiocarbon sections for Model vs. 
+! observations
+!
+! use: go pl_dc14_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_c14 ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "@SGD@SR^1^4C (permil)"
+def sym opt=hlim=-250.0:0.:20
+def sym dopt=hlim=-60:60:10
+def sym xfor=(i4)
+def sym xford=(i4)
+
+go pl_dvar_xyav
+

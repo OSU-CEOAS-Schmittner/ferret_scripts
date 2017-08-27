@@ -1,0 +1,43 @@
+!***********************************************************************
+! Description: plots density horizontal averages for Model vs. 
+! observations
+!
+! use: go pl_drho_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_rho ($dataset) ($tim)
+
+use ($dataset)
+
+def sym varname = "@SGs_Q"
+
+def sym opt=hlim=26:28:0.2
+def sym dopt=hlim=-0.5:0.5:0.1
+def sym xfor=(f4.1)
+def sym xford=(f4.1)
+
+go pl_dvar_xyav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

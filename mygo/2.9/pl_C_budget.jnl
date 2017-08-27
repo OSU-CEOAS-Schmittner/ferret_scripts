@@ -1,0 +1,8 @@
+
+go pl_land_C_budget
+go pl_ocean_C_budget
+
+let ppmtoPg = 2.1
+let acarb = a_co2*ppmtoPg
+let/units="PgC"/title="Total Atmosphere C Change" dacarb = acarb - acarb[l=1]
+pl dacarb, docarb, dlcarb

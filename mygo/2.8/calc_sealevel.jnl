@@ -1,0 +1,3 @@
+let z00 = z+0*rho
+let z0 = z00[z=@max] ! height of water collumn
+let/title="Sea Level Height"/units="m" slh = z0*(1035/rho[z=@ave]-1)

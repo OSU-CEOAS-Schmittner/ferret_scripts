@@ -1,0 +1,80 @@
+
+use tavg.01810.01.01.nc
+use "../aragorn_ab1/tavg.03300.01.01.nc"
+
+def symbol dataset1 = 1
+def symbol tim1 = l=20
+
+go portraitNxN 2 3 97 30
+def view/xlim=0:.95/ylim=.55:1/text=.6 1
+def view/xlim=0:.95/ylim=.29:.73/text=.6 2
+go calc_taylor_c13 ($dataset1) ($tim1)
+
+ppl AXLSZE 0.16 0.16
+!ppl AXNMTC,1,0
+set view 1
+ca reg
+set reg/k=1/y=79s:79n/x=20:380
+
+palette default
+sha/set/nolab/axes=1,0,1,1/lev=(-inf)(0.6,2.2,.2)(inf) pmasked
+ppl shakey 1, 1, 0.16, ,,,,,,,,
+ppl shade
+fill/o/nolab/lev=(-inf)(0.6,2.2,.2)(inf) pmasked
+con/o/nolab/lev=(0.4,2.4,.4)/size=0.16 pmasked
+sha/nolab/o/lev=(0)/pal=grey kmt[d=1]
+label/nouser `($ppl$xlen)*0.5` `($ppl$ylen)*1.17` 0,0,0.2 "Surface @SGd@SR^1^3C (permil)"
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.8` -1,0,0.2 "Observations"
+
+set view 2
+sha/set/nolab/axes=0,1,1,1/lev=(-inf)(0.6,2.2,.2)(inf) q
+ppl shakey 1, 1, 0.16, 
+ppl shade
+
+fill/nolab/o/lev=(-inf)(0.6,2.2,.2)(inf) q
+con/nolab/o/lev=(0.4,2.4,.4)/size=0.12 q
+
+sha/nolab/o/lev=(0)/pal=grey kmt[d=1]
+label/nouser `($ppl$xlen)*0.05` `($ppl$ylen)*.8` -1,0,0.2 "Model"
+
+set view 5
+
+plot/nolab/vlim=1:3/sym=18/set/axes=0,1,1,0 pmasked[x=@ave]
+ppl yfor (f3.1)
+ppl xlab LATITUDE
+ppl plot
+ppl AXLSZE 0.0 0.16
+let pmax = pmasked[x=@var]^0.5
+let pmin = pmasked[x=@var]^0.5
+let dpe_mg = pmasked[x=@ave]+pmax
+let dme_mg = pmasked[x=@ave]-pmin
+!plot/ov/nolab/li=1 dpe_mg
+!plot/ov/nolab/li=1 dme_mg
+
+go calc_taylor_c13 ($dataset1) ($tim1)
+plot/ov/nolab/col=black/thick=2 qmasked[x=@ave]
+
+go calc_taylor_c13 ($dataset1) l=1
+plot/ov/nolab/col=black/thick=1 qmasked[x=@ave]
+
+go calc_taylor_c13 2 l=20
+plot/ov/nolab/col=black/thick=1/dash qmasked[x=@ave]
+
+
+plot/ov/nolab/col=black/thick=1/y=-40:-25/li qmasked[x=@ave]*0+2.9
+label -20 2.9 -1,0,0.15 "1800-1810"
+
+plot/ov/nolab/col=black/thick=2/y=-40:-25/li qmasked[x=@ave]*0+2.7
+label -20 2.7 -1,0,0.15 "1990-2000"
+
+plot/ov/nolab/col=black/thick=1/y=20:35/li/dash qmasked[x=@ave]*0+2.9
+label 40 2.9 -1,0,0.15 "@SGa@SR_b_i_o=1 1800-1810"
+
+plot/ov/nolab/y=20:35/sym=18 qmasked[x=@ave,j=1:100:4]*0+2.7
+label 40 2.7 -1,0,0.15 "Obs 1990-2005"
+
+
+
+
+
+

@@ -1,0 +1,46 @@
+!***********************************************************************
+! Description: plots temperature profiles for Model vs. 
+! observations
+!
+! use: go pl_temp_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_temp ($dataset) ($tim)
+
+go set_ocean pmasked
+go set_ocean qmasked
+
+def sym opt=hlim=-2:25:2
+def sym labx1=10
+def sym labxd=2
+def sym laby1=1500
+def sym laby2=2500
+
+go pl_var_xyav
+
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*(-0.3)`  0,0,0.2 "T (^oC)"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

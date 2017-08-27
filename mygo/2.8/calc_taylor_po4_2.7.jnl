@@ -1,0 +1,18 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+!let nutrm = nutr*1e3
+let nutrm = nutr/16
+let nutrm = nutr[d=($dataset),($tim)]
+go set_ocean nutrm
+
+use "/raid1/aschmitt/data/woa01/po4.cdf"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=nutr[d=($dataset)]/t=PHOSPHATE mg
+let po4_mg = PHOSPHATE[g=mg,d=po4]
+go set_ocean po4_mg mskhr[d=($dataset)]
+
+let p = po4_mg[d=po4]
+let q = nutrm
+go regressxyz

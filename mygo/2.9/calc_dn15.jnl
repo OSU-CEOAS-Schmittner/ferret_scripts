@@ -1,0 +1,11 @@
+!	standard ratio set to 1
+let rn15std = 0.0036765
+
+let d15no3 = (O_din15/(O_no3-O_din15)/rn15std-1)*1000
+let d15phyt = (O_phytn15/(O_phyt-O_phytn15)/rn15std-1)*1000
+let d15zoop = (O_zoopn15/(O_zoop-O_zoopn15)/rn15std-1)*1000
+let d15detr = (O_detrn15/(O_detr-O_detrn15)/rn15std-1)*1000
+let d15diaz = (O_diazn15/(O_diaz-O_diazn15)/rn15std-1)*1000
+let d15cocc = (O_coccn15/(O_cocc-O_coccn15)/rn15std-1)*1000
+let d15don = (O_don15/(O_don-O_don15)/rn15std-1)*1000
+

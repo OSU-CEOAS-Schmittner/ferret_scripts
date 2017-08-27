@@ -1,0 +1,73 @@
+!***********************************************************************
+! Description: plots SST for FOAM vs. Levitus observations
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+!set data ocean.des
+let sst = 'T'[k=24]
+let sss = s[k=24]
+define symbol tav = $1%l=1%
+use lev_annual
+go portraitNxN 2 2 10 10
+set reg/x=60:400
+use 1
+
+set view 1
+define symbol lev = (-2,32,1)
+shade/nolabels/set/pal=saz2/lev=($lev)/nokey/z=-5500:0 sst[($tav)]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0 0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(sst[($tav)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "MODEL SST (^oC)"
+
+set view 2
+shade/nolabels/set/pal=saz2/lev=($lev)/z=5500:0 temp[k=1,d=lev_annual]
+PPL DFLTFNT DR
+ppl AXLSZE 0 0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(temp[k=1,d=lev_annual],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "LEVITUS SST (^oC)"
+
+! SSS
+
+set view 3
+define symbol lev = (29,38.2,0.1)
+shade/nolabels/set/pal=saz2/lev=($lev)/nokey/z=-5500:0 sss[($tav)]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0 0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(sss[($tav)],-99)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "MODEL SSS"
+
+set view 4
+shade/nolabels/set/pal=saz2/lev=($lev)/z=5500:0 salt[k=1,d=lev_annual]
+PPL DFLTFNT DR
+ppl AXLSZE 0 0
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt[k=1,d=lev_annual],0)
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.07` 0,0,0.2 "LEVITUS SSS"
+
+
+
+
+
+
+
+
+

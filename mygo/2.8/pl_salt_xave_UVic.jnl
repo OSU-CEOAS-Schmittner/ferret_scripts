@@ -1,0 +1,145 @@
+!***********************************************************************
+! Description: plots salinity for UVic ESCM vs. Levitus observations
+!
+! arguments  : $1 : time (averaging) period e.g. l=1:12@ave or l=2
+!
+!***********************************************************************
+define symbol tav = $1%l=1%
+let salt_model = salinity[($tav)]
+set axis/depth zt
+go set_drain2 salt_model
+set data/save
+use lev_annual
+go portraitNxN 2 4 6 20
+set data/restore
+let salt_lev = salt[d=lev_annual]
+go set_drain2 salt_lev
+
+!set view upper
+!shade/set/nolabels/pal=white/lev=($lev)/nokey salt[x=@ave]
+
+set view 1
+define symbol lev = (33,36,0.1)
+shade/nolabels/set/pal=saz2/lev=($lev)/nokey salt_model[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salt_model[x=@ave],-99)
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*1.13` 0,0,0.2 "WORLD OCEAN"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.4` 0,0,0.25 "MODEL"
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*1.4` 0,0,0.3 "SALINITY"
+
+set view 2
+shade/nolabels/set/pal=saz2/lev=($lev) salt_lev[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt_lev[x=@ave],0)
+!label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "WORLD OCEAN"
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.4` 0,0,0.25 "LEVITUS"
+
+! ATLANTIC
+
+set view 3
+define symbol lev = (33,37,0.1)
+shade/nolabels/y=-35:90/set/pal=saz2/lev=($lev)/nokey salt_model_a[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salt_model_a[x=@ave],-99)
+contour/ov/nolab/lev=(34.9) salt_model_a[x=@ave]
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*1.13` 0,0,0.2 "ATLANTIC "
+
+set view 4
+shade/nolabels/y=-35:90/set/pal=saz2/lev=($lev) salt_lev_a[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt_lev_a[x=@ave],0)
+contour/ov/nolab/lev=(34.9) salt_lev_a[x=@ave]
+!label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "ATLANTIC "
+
+! PACIFIC
+
+set view 5
+define symbol lev = (33,37,0.1)
+shade/nolabels/y=-35:65/set/pal=saz2/lev=($lev)/nokey salt_model_p[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salt_model_p[x=@ave],-99)
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*1.13` 0,0,0.2 "PACIFIC "
+
+set view 6
+shade/nolabels/y=-35:65/set/pal=saz2/lev=($lev)/z=5500:0 salt_lev_p[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt_lev_p[x=@ave],0)
+!label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "PACIFIC "
+
+! INDIAN
+
+set view 7
+define symbol lev = (33,37,0.1)
+shade/nolabels/y=-35:20/set/pal=saz2/lev=($lev)/nokey salt_model_i[x=@ave]
+PPL DFLTFNT DR
+! ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(-99)/ov/pal=gray missing(salt_model_i[x=@ave],-99)
+label/nouser `($ppl$xlen)*1.15` `($ppl$ylen)*1.13` 0,0,0.2 "INDIAN OCEAN "
+
+set view 8
+shade/nolabels/y=-35:20/set/pal=saz2/lev=($lev)/z=5500:0 salt_lev_i[x=@ave]
+PPL DFLTFNT DR
+ppl ylab DEPTH (m)
+ppl AXLSZE 0.15 0.15
+ppl TXLSZE 0.2
+ppl conset .15 2 1 0.04 0.04 0 0 2 0 0
+ppl labset, 0.0, 0.0, 0.15, 0.12
+ppl shade
+shade/nolabels/nokey/lev=(0)/ov/pal=gray missing(salt_lev_i[x=@ave],0)
+!label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.13` 0,0,0.2 "INDIAN OCEAN"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

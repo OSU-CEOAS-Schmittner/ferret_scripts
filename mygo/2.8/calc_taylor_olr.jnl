@@ -1,0 +1,12 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+use "/raid1/aschmitt/data/erbe/ERBE_mean.cdf"
+set axis/depth zt
+set axis/modulo xt
+define grid/like=outlwr[d=($dataset)]/t=olr mg
+let olr_mg = olr[g=mg,d=ERBE_mean]
+
+let p = olr_mg
+let q = outlwr[d=($dataset),($tim)]
+go regressxy

@@ -1,0 +1,54 @@
+go portraitNxN 2 3 10 30
+use "/home/aschmitt/data/igbp_vegetation/frac_igbp.cdf"
+use 1
+def grid/like=frac mg
+let msk = if (tmsk eq 0) then 1
+
+set win 1
+set view 1
+sha/nolab/lev=(0,1,.1) frac[k=1]
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.05` 0,0,0.2 "Model"
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*.95` 1,0,0.16 "B Tree"
+
+set view 2
+sha/nolab/lev=(0,1,.1) btree[d=frac_igbp,g=mg]*msk
+label/nouser `($ppl$xlen)*.5` `($ppl$ylen)*1.05` 0,0,0.2 "Obs IGBP"
+
+set view 3
+sha/nolab/lev=(0,1,.1) frac[k=2]
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*.95` 1,0,0.16 "N Tree"
+
+set view 4
+sha/nolab/lev=(0,1,.1) ntree[d=frac_igbp,g=mg]*msk
+
+set view 5
+sha/nolab/lev=(0,1,.1) frac[k=3]
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*.95` 1,0,0.16 "C3 Grass"
+
+set view 6
+sha/nolab/lev=(0,1,.1) c3g[d=frac_igbp,g=mg]*msk
+
+
+set win 2
+set view 1
+sha/nolab/lev=(0,1,.1) frac[k=4]
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*.95` 1,0,0.16 "C4 Grass"
+
+set view 2
+sha/nolab/lev=(0,1,.1) c4g[d=frac_igbp,g=mg]*msk
+
+set view 3
+sha/nolab/lev=(0,1,.1) frac[k=5]
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*.95` 1,0,0.16 "Shrub"
+
+set view 4
+sha/nolab/lev=(0,1,.1) shrub[d=frac_igbp,g=mg]*msk
+
+set view 5
+sha/nolab/lev=(0,1,.1) frac[k=6]
+label/nouser `($ppl$xlen)*.95` `($ppl$ylen)*.95` 1,0,0.16 "Bare Soil"
+
+set view 6
+let rest = soil+URBAN_AND_WATER+ice
+sha/nolab/lev=(0,1,.1) rest[d=frac_igbp,g=mg]*msk
+

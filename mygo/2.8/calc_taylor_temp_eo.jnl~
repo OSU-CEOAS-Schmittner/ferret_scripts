@@ -1,0 +1,31 @@
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+let tem = temperature[($tim),d=($dataset)]-273.15
+go set_ocean tem
+!use "/raid1/aschmitt/data/woa01/temp.cdf"
+use "/raid1/aschmitt/data/woa05/t00an1.nc"
+set axis/depth zt
+set axis/modulo xt
+!define grid/like=tem[d=($dataset)]/t=temperature mg	 ! WOA01
+define grid/like=tem[d=($dataset)]/t=T00AN1 mg	 	 ! WOA05
+!let temp_mg = temperature[g=mg,d=temp,l=1]		 ! WOA01
+let temp_mg = T00AN1[g=mg@ave,d=t00an1,l=1]			 ! WOA05
+!use "/raid1/aschmitt/data/woa01/salt.cdf"
+use "/raid1/aschmitt/data/woa05/s00an1.nc"
+!let salt_mg = salinity[g=mg,d=salt,l=1]
+let salt_mg = S00AN1[g=mg@ave,d=s00an1,l=1]
+let theta_mg = theta_fo(salt_mg,temp_mg,z+0*temp_mg,0)
+go set_ocean theta_mg mskhr[d=($dataset)]
+
+let p = theta_mg
+let q = tem
+
+use "/raid1/aschmitt/data/woa05/t00se1.nc"
+let error_mg = T00SE1[g=mg,d=t00se1,l=1]
+use "/raid1/aschmitt/data/woa05/t00sd1.nc"
+let error_mg = T00SD1[g=mg@ave,d=t00sd1,l=1]
+
+! perr = error of obs + model error
+let perr = theta_mg*0 + error_mg + 2
+go regressxyz2
+

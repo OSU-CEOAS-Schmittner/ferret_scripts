@@ -1,0 +1,72 @@
+!***********************************************************************
+! Description: plots top-of-atmosphere net radiation for 
+! PUMA versus ERBE observations
+!
+! use: go pl_toanet 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+go portraitNxN 2 2 10 12
+set win/asp=0.9
+set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal default
+let mod = tsr[($2),d=($dataset)]
+def grid/like=tsr[d=($dataset)] mg
+
+use "/home/aschmitt/data/erbe/ERBE_mean.cdf"
+let obs = asr[g=mg@ave]
+
+set view 1
+pl/set/nolab obs[x=@ave]
+ppl plot
+pl/o/nolab mod[x=@ave]
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "TOA Incoming Shortwave Radiation (W/m^2)"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.94` 1,0,0.17 "ERBE"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.86` 1,0,0.17 "1985-1989"
+label/nouser `($ppl$xlen)*0.98` `($ppl$ylen)*0.78` 1,0,0.17 "@p2MODEL"
+
+set view 2
+let mod = ttr[($2),d=($dataset)]*(-1)
+let obs = olr[g=mg@ave]
+
+pl/set/nolab obs[x=@ave]
+ppl plot
+pl/o/nolab mod[x=@ave]
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Outgoing Longwave (W/m^2)"
+
+set view 3
+let mod = tsr[($2),d=($dataset)]+ttr[($2),d=($dataset)]
+let obs = asr[g=mg@ave]-olr[g=mg@ave]
+
+pl/set/nolab/vlim=-160:80 obs[x=@ave]
+ppl plot
+pl/o/nolab mod[x=@ave]
+pl/o/nolab/dash/col=black mod[x=@ave]*0
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Net Balance (W/m^2)"
+
+set view 4
+let mod = tsr[($2),d=($dataset)]+ttr[($2),d=($dataset)]
+let obs = asr[g=mg@ave]-olr[g=mg@ave]
+
+pl/set/nolab obs[x=@din,y=@iin]*1e-15
+ppl plot
+pl/o/nolab mod[x=@din,y=@iin]*1e-15
+pl/o/nolab/col=red (mod[x=@din,y=@iin]-mod[x=@din,y=@din])*1e-15
+pl/o/nolab/dash/col=black mod[x=@ave]*0
+
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Meridional Energy Transport (PW)"
+

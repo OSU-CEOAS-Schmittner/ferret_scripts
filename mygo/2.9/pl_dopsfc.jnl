@@ -1,0 +1,28 @@
+!***********************************************************************
+! Description: plots delta dfe profiles for Model vs. 
+! observations
+!
+! use: go pl_dfe_xyav 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+
+go calc_taylor_dop ($dataset) ($tim)
+
+define symbol lev = lev=(0,400,50)(inf)
+def sym opt=vlim=0:300:50
+def sym yfor=(i3)
+def sym labx1=-85
+def sym labxd=13
+def sym laby1=260
+def sym laby2=230
+def sym title="Surface (0-50m) Dissolved Organic Phosphorous (nM)"
+
+go pl_varsfc

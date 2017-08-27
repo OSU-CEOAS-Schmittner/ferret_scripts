@@ -1,0 +1,7 @@
+let kgtoPg = 1e-12
+let/units="PgC/s"/title="C Flux" lcflx =  (L_SOILRESP - L_VEGNPP + L_VEGBURN)*(-1)*kgtoPg
+let/units="PgC"/title="Integrated C Flux" lcflxin = lcflx[t=@iin]
+let/units="PgC"/title="Land C" lcarb = (l_soilcarb+l_vegcarb)*kgtoPg
+let/units="PgC"/title="Land C Change" dlcarb = lcarb - lcarb[l=1]
+
+pl lcflxin, dlcarb

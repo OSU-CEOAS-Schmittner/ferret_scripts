@@ -1,0 +1,17 @@
+!	C:N (Redfield) ratio
+let redctn = 6.625
+!	standard ratio
+let rc13std = 0.0112372
+
+let d13dic = (O_dic13/(O_dic-O_dic13)/rc13std-1)*1000
+let d13phyt = (O_phytc13/(O_phyt*redctn-O_phytc13)/rc13std-1)*1000
+let d13zoop = (O_zoopc13/(O_zoop*redctn-O_zoopc13)/rc13std-1)*1000
+let d13detr = (O_detrc13/(O_detr*redctn-O_detrc13)/rc13std-1)*1000
+let d13diaz = (O_diazc13/(O_diaz*redctn-O_diazc13)/rc13std-1)*1000
+!let d13cocc = (O_coccc13*1000/(O_cocc*redctn-O_coccc13*1000)/rc13std-1)*1000
+let d13cocc = (O_coccc13/(O_cocc*redctn-O_coccc13)/rc13std-1)*1000
+let d13caco3 = (O_caco3c13/(O_caco3-O_caco3c13)/rc13std-1)*1000
+
+let o_doc = o_don*redctn
+let d13doc = (O_doc13/(O_doc-O_doc13)/rc13std-1)*1000
+

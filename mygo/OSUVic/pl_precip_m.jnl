@@ -1,0 +1,83 @@
+!***********************************************************************
+! Description: plots precipitation
+! PUMA versus NCEP reanalysis
+!
+! use: go pl_precip_m 1 l=7:9@ave t=01-jan-0610:01-jan-0620 "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : month(s) e.g. l=12:14@ave or l=2
+!            : $3 : model time averaging period e.g. t=01-jan-0610:01-jan-0620
+!            : $4 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol otim = $2%l=1%
+def symbol mtim = $3%l=1%
+def sym model = $4%MODEL%
+!def sym lev = lev=(0,4,.4)(inf)
+def sym lev = lev=(0)(0.1)(0.25)(0.5)(1)(2)(4)(7)(inf)
+def sym lev2 = lev=(-inf)(-4)(-2)(-1)(-.5)(-0.2)(0.2)(0.5)(1)(2)(4)(inf)
+go portraitNxN 2 2 5 20
+set win/asp=0.8
+!set reg/x=180:540
+!set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal inverse_greyscale
+pal orange_blue
+
+use climatological_axes
+ca da climatological_axes
+
+use "/home/aschmitt/data/gpcp_precip/gpcp_mo_clim.nc"
+let obs0 = prcp[d=gpcp_mo_clim.nc]
+
+let day = 3600*24
+let mod0 = (lsp[d=($dataset)]+cp[d=($dataset)])*day*1000	! mm/day  PUMA
+!let mod0 = precip[d=($dataset)]*day				! mm/day  UVic
+
+def grid/like=mod0/t=obs0/z=obs0 mg	! UVic
+
+let obs = obs0[g=mg@ave,($otim)]
+let mod1 = mod0[($mtim)]
+let mod2 = mod1[gt=month_reg@mod]
+let mod = mod2[($otim)]
+
+let delta = mod-obs
+
+set view 1
+shade/set/nolab/($lev) obs
+ppl axlsze 0,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) obs
+go land
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "Precipitation (mm/d)"
+label/nouser `($ppl$xlen)*0.99` `($ppl$ylen)*1.02` 1,0,0.2 "GPCP"
+
+
+set view 2
+shade/set/nolab/($lev)/nokey mod
+ppl axlsze .14,0
+ppl shade
+fill/nolab/o/($lev) mod
+go land
+label/nouser `($ppl$xlen)*0.99` `($ppl$ylen)*1.02` 1,0,0.2 ($model)
+
+set view 3
+shade/set/nolab/($lev2) delta
+ppl axlsze .14,.14
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev2) delta
+go land
+label/nouser `($ppl$xlen)*0.99` `($ppl$ylen)*1.02` 1,0,0.2 MODEL-GPCP
+
+set view 4
+pl/set/nol/axes=0,1,0,1 obs[x=@ave], mod[x=@ave]
+ppl yfor (i1)
+ppl plot 
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.9` 1,0,0.2 @p2MODEL
+label/nouser `($ppl$xlen)*1.` `($ppl$ylen)*0.8` 1,0,0.2 GPCP

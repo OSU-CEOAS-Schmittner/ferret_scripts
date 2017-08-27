@@ -1,0 +1,20 @@
+! compares simulated surface air temperature zonally averaged 
+! use: yes? use mydata.nc; set reg/l=10; go pl_dic_xyav.jnl 1 l=10
+def symbol dataset = $1%1%
+def symbol tim = $2%l=@ave%
+
+use "/raid1/aschmitt/data/ncep/ncep.mean.nc"
+
+pl/set/nolab/sym=20/ylim=-55:3/size=.2 p[x=@ave]
+
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl ylab SAT (^oC)
+ppl yfor (f3.1)
+ppl plot
+
+use 1
+pl/nolab/o/li/col=red/thick=3 q[x=@ave]
+
+pl/o/nolab/vs/sym=20/size=.2 {-10,0,10},{30,30,30}; label -40 30  -1,0,0.2 "WOA01"
+pl/o/nolab/vs/li/col=red/thick=3 {-10,10},{27,27}; label -40 27  -1,0,0.2 "MODEL"

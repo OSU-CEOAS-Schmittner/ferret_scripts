@@ -1,0 +1,10 @@
+def symbol dataset = $1%1%
+def symbol tav = $2%l=1%
+use "/raid1/aschmitt/data/takahashi/fluxdata.cdf"
+let co2_flux_mg = CO2_FLUX[gx=flux_carbon[d=($dataset)],gy=flux_carbon[d=($dataset)],d=fluxdata]
+let year = 3600*24*365
+let fac = year*(-1)
+
+let p = co2_flux_mg[l=1:12@ave]
+let q = flux_dic[d=($dataset),($tav)]*fac
+go regressxy

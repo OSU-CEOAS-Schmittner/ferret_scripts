@@ -1,0 +1,56 @@
+!***********************************************************************
+! Description: plots top-of-atmosphere outgoing longwave radiation for 
+! PUMA versus ERBE observations
+!
+! use: go pl_toaolr 1 l=1:12@ave "My Model"
+!
+! arguments  : $1 : data set e.g. 1 or model.output.nc
+!            : $2 : time (averaging) period e.g. l=1:12@ave or l=2
+!            : $3 : model acromym (optional)
+!
+!***********************************************************************
+
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+def sym model = $3%MODEL%
+def sym lev = lev=(0,320,20)
+go portraitNxN 2 3 60 24
+!set win/asp=0.9
+set reg/x=120:480
+set axis/modulo xt
+ppl axlsze .14,.14
+ppl labset .18,.16,.16,.16
+ppl shakey ,,.12,,,,,,
+pal centered
+pal blue_darkred
+let toaolrm = c179[($2),d=($dataset)]
+
+use "/raid1/aschmitt/data/erbe/ERBE_mean.cdf"
+
+set view 1
+shade/set/nolab/($lev) olr
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) olr
+con/o/nolab/lev=(0.1)/o kmt[d=($dataset)]
+label/nouser `($ppl$xlen)/2` `($ppl$ylen)*1.1` 0,0,0.2 "TOA LW (W/m^2)"
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 "ERBE (1985-1989)"
+
+set view 3
+shade/set/nolab/($lev) toaolrm
+ppl shakey 1,1,0.16
+ppl shade
+fill/nolab/o/($lev) toaolrm
+!sha/o/nolab/lev=(0)/pal=grey kmt[d=($dataset)]
+label/nouser `($ppl$xlen)*0.7` `($ppl$ylen)*0.8` -1,0,0.2 ($model)
+stop
+set view 5
+pl/set/nolab/li=1/thick p[x=@ave]
+ppl AXLSZE 0.16 0.16
+ppl LABSET,,0.2,0.2,
+ppl yfor (f4.1)
+ppl plot
+pl/nolab/o/li/col=red/thick=3 q[x=@ave]
+pl/o/nolab/vs/li=1/thick=3 {-10,0,10},{30,30,30}; label -40 30  -1,0,0.2 "ERBE"
+pl/o/nolab/vs/li/col=red/thick=3 {-10,10},{27,27}; label -40 27  -1,0,0.2 "MODEL"
+

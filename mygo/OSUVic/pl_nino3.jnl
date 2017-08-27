@@ -1,0 +1,42 @@
+use tavg.00040.02.01.nc
+let nino3 = temperature[k=1,x=220:280@ave,y=5s:5n@ave]
+use "../10.t42.24lev.noveg/tavg.00004.01.31.nc"
+use "../10.t42.30lev/tavg.00000.01.31.nc"
+pl nino3[d=1],nino3[d=2],nino3[d=3]
+use "../9/tavg.01390.01.31.nc"
+set win 2
+pl nino3
+list nino3[t=01-jan-0040:31-dec-0079@var,d=1]^.5
+list nino3[t=01-jan-0010:31-dec-0028@var,d=2]^.5
+list nino3[t=01-jan-0015:31-dec-0022@var,d=3]^.5
+pause
+set axis/depth zt
+set axis/depth zt1
+set axis/depth zt2
+use "/home/aschmitt/data/woa05/t00an1.nc"
+set view ul
+set reg/x=150:280/y=0/z=0:400
+sha t00an1
+set view ur
+sha/lev=(8,30,2) temperature[t=01-jan-0040:31-dec-0079@ave,d=1]-273.15
+set view ll
+sha/lev=(8,30,2) temperature[t=01-jan-0018:31-dec-0028@ave,d=2]-273.15
+set view lr
+sha/lev=(8,30,2) temperature[t=01-jan-0015:31-dec-0022@ave,d=3]-273.15
+
+set win 3
+set view ul
+sha/lev=(8,30,2) temperature[t=01-jan-1390:31-dec-1400@ave,d=4]-273.15
+use "/home/aschmitt/UVic/test/tavg.00000.01.31.nc"
+set view ur
+sha/lev=(8,30,2) temperature[t=01-jan-0010:31-dec-0014@ave,d=3]-273.15
+set view ll
+use "/home/aschmitt/UVic/c5f3/tavg.05500.01.01.nc"
+
+set view ur
+set axis/depth zt3
+sha/lev=(8,28,2)(inf) temperature[t=01-jan-0010:31-dec-0014@ave,d=6]-273.15
+set view ll; sha/lev=(8,28,2)(inf) temperature[l=1,d=7]-273.15
+use "/home/aschmitt/UVic/30lev/tavg.00010.01.01.nc"
+set axis/depth zt4
+set view lr; sha/lev=(8,28,2)(inf) temperature[l=1,d=8]-273.15

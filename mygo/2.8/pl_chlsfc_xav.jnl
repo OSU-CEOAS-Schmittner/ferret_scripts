@@ -1,0 +1,53 @@
+! plots zonally and annualy averaged chlorophyll model and observations
+! use: go pl_chlsfc_xav.jnl #dataset time
+! e.g. go pl_chlsfc_xav 1 l=12:24@ave
+def symbol dataset = $1%1%
+def symbol tim = $2%l=1%
+
+go portrait
+def view/xlim=0.1:0.9/ylim=0.3:0.8 up
+def view/xlim=0.1:0.9/ylim=0.1:0.45 lo
+set view up
+PPL DFLTFNT DR
+
+use "/raid1/aschmitt/data/seawifs/chl_yr_on_UVic_model_grid.nc"
+let mask = if CHLYR_MG[d=chl_yr_on_UVic_model_grid] then 1 else 0
+let chl_obs = if mask[l=1:12@ave] eq 1 then CHLYR_MG[d=chl_yr_on_UVic_model_grid,l=1:12@ave]
+use "/raid1/aschmitt/data/woa01/chl_seasonal.cdf"
+let mask2 = if C1316AN1[d=chl_seasonal,gx=phyt[d=1],gy=phyt[d=1]] then 1 else 0
+let chl_obs2 = if mask2[l=1:4@ave] eq 1 then C1316AN1[d=chl_seasonal,gx=phyt[d=1],gy=phyt[d=1],l=1:4@ave]
+
+! limit maximum chlorophyl. Otherwise bad correlation caused by
+! very high (and probably false) coastal values
+let P = if (chl_obs[x=@sbx:3] le 2) then chl_obs[x=@sbx:3]
+let P2 = if (chl_obs2[x=@sbx:3] le 2) then chl_obs2[x=@sbx:3]
+let Q = if (chl_model[x=@sbx:3] le 2) then chl_model[x=@sbx:3]
+let P = chl_obs[x=@sbx:3]
+let P2 = chl_obs2[x=@sbx:3]
+let Q = chl_model[x=@sbx:3]
+
+can reg
+set reg/k=1
+pl/set/nolab/sym=20/thick=2/ylim=0:1 p[x=@ave,j=1:100:2]
+ppl AXLSZE 0.16 0.16
+ppl markh, 1, 0.13
+ppl LABSET,,0.2,0.2,
+ppl ylab CHLOROPHYLL (mg m^-^3)
+ppl yfor (f3.1)
+ppl plot
+pl/set/nolab/sym=18/thick=2/o p2[x=@ave,j=1:100:2]
+ppl markh, 1, 0.13
+ppl plot/ov
+
+set reg/k=1
+use ($dataset)
+go calc_chl_n_ratio
+let chl_model = chl
+
+pl/nolab/o/li/col=black/thick=3 q[x=@ave,($tim)]
+
+
+pl/o/nolab/vs/sym=20/thick=2 {-50,-40,-30},{.88,.88,.88}; label -25 .88 -1,0,0.2 "SeaWIFS"
+pl/o/nolab/vs/sym=18/thick=2 {-50,-40,-30},{.78,.78,.78}; label -25 .78 -1,0,0.2 "WOA01"
+pl/o/nolab/vs/li/col=black/thick=3 {-50,-30},{.68,.68}; label -25 .68 -1,0,0.2 "Model"
+
